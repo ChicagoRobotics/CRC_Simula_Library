@@ -1,7 +1,7 @@
 
 #include "CRC_MessageTypes.h"
 
-typedef void(*Message_Handler)(uint8_t messageSequence, uint8_t messageId, void* messageContent, Messaging * messageSource);
+typedef void(*Message_Handler)(uint8_t messageSequence, uint8_t messageId, void* messageContent, CRC_Messaging * messageSource);
 
 // Mapping between Message Id's and their associated Handlers
 // The index in the Array is the Message Id, and the 
@@ -24,7 +24,7 @@ static const Message_Handler MESSAGE_HANDLER[] = {
 /**
 * Handles any inbound messages from the passed in message source
 */
-boolean handleMessages(Messaging * messageSource)
+boolean handleMessages(CRC_Messaging * messageSource)
 {
 	boolean hadMessage = false;
 	if (messageSource -> hasMessage())
@@ -58,10 +58,10 @@ boolean handleMessages(Messaging * messageSource)
 /**
 * Handles the call to set the Motors, delegate to the Motor Manager
 **/
-void msgHandler_SetMotors(uint8_t messageSequence, uint8_t messageId, void * messageContent, Messaging * messageSource)
+void msgHandler_SetMotors(uint8_t messageSequence, uint8_t messageId, void * messageContent, CRC_Messaging * messageSource)
 {
 	HIVEMSG_MOVE * moveCommand = (HIVEMSG_MOVE *)messageContent;
-	Motor.setMotor(moveCommand->leftMotor, moveCommand->rightMotor);
+	CRC_Motor.setMotor(moveCommand->leftMotor, moveCommand->rightMotor);
 
 	// Acknowledge the Message
 	messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
@@ -70,7 +70,7 @@ void msgHandler_SetMotors(uint8_t messageSequence, uint8_t messageId, void * mes
 /**
 * Handles the call to query for information
 **/
-void msgHandler_Query(uint8_t messageSequence, uint8_t messageId, void * messageContent, Messaging * messageSource)
+void msgHandler_Query(uint8_t messageSequence, uint8_t messageId, void * messageContent, CRC_Messaging * messageSource)
 {
 	HIVEMSG_QUERY * queryCommand = (HIVEMSG_QUERY *)messageContent;
 
@@ -84,7 +84,7 @@ void msgHandler_Query(uint8_t messageSequence, uint8_t messageId, void * message
 }
 
 
-void msgHandler_MusicPlay(uint8_t messageSequence, uint8_t messageId, void * messageContent, Messaging * messageSource)
+void msgHandler_MusicPlay(uint8_t messageSequence, uint8_t messageId, void * messageContent, CRC_Messaging * messageSource)
 {
 	HIVEMSG_MUSIC_PLAY * playCommand = (HIVEMSG_MUSIC_PLAY *)messageContent;
 
@@ -100,16 +100,16 @@ void msgHandler_MusicPlay(uint8_t messageSequence, uint8_t messageId, void * mes
 	}
 	else if (playCommand->playType == HIVEMSG_MUSIC_CMD_PLAY)
 	{
-		AudioManager.startAudioFile(playCommand->filePath);
+		CRC_AudioManager.startAudioFile(playCommand->filePath);
 		messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 	}
 	else if (playCommand->playType == HIVEMSG_MUSIC_CMD_REQUEST)
 	{
-		if (AudioManager.isPlayingAudio()) {
+		if (CRC_AudioManager.isPlayingAudio()) {
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_FAILED, ERR_BUSY);
 		}
 		else {
-			AudioManager.startAudioFile(playCommand->filePath);
+			CRC_AudioManager.startAudioFile(playCommand->filePath);
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 		}
 	}
@@ -119,21 +119,21 @@ void msgHandler_MusicPlay(uint8_t messageSequence, uint8_t messageId, void * mes
 
 }
 
-void msgHandler_MusicCtrl(uint8_t messageSequence, uint8_t messageId, void * messageContent, Messaging * messageSource)
+void msgHandler_MusicCtrl(uint8_t messageSequence, uint8_t messageId, void * messageContent, CRC_Messaging * messageSource)
 {
 	HIVEMSG_MUSIC_CONTROL * controlCommand = (HIVEMSG_MUSIC_CONTROL *)messageContent;
 
 	switch(controlCommand->cmd) {
 		case HIVEMSG_MUSIC_CMD_STOP:
-			AudioManager.stopAudio();
+			CRC_AudioManager.stopAudio();
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 			break;
 		case HIVEMSG_MUSIC_CMD_VOLUME:
-			AudioManager.setVolume(controlCommand->value1, controlCommand->value2);
+			CRC_AudioManager.setVolume(controlCommand->value1, controlCommand->value2);
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 			break;
 		case HIVEMSG_MUSIC_CMD_AMP:
-			AudioManager.setAmpGain(controlCommand->value1);
+			CRC_AudioManager.setAmpGain(controlCommand->value1);
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 			break;
 		default:
@@ -141,13 +141,13 @@ void msgHandler_MusicCtrl(uint8_t messageSequence, uint8_t messageId, void * mes
 	}
 }
 
-void msgHandler_LedCtrl(uint8_t messageSequence, uint8_t messageId, void * messageContent, Messaging * messageSource)
+void msgHandler_LedCtrl(uint8_t messageSequence, uint8_t messageId, void * messageContent, CRC_Messaging * messageSource)
 {
 	HIVEMSG_LED_CONTROL * controlCommand = (HIVEMSG_LED_CONTROL *)messageContent;
 
 	switch (controlCommand->cmd) {
 	case HIVEMSG_LED_CMD_SET:
-		Lights.setLed(controlCommand->ledId, controlCommand->red, controlCommand->green, controlCommand->blue);
+		CRC_Lights.setLed(controlCommand->ledId, controlCommand->red, controlCommand->green, controlCommand->blue);
 		messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 		break;
 	default:
@@ -155,9 +155,9 @@ void msgHandler_LedCtrl(uint8_t messageSequence, uint8_t messageId, void * messa
 	}
 }
 
-void msgHandler_File(uint8_t messageSequence, uint8_t messageId, void * messageContent, Messaging * messageSource)
+void msgHandler_File(uint8_t messageSequence, uint8_t messageId, void * messageContent, CRC_Messaging * messageSource)
 {
 	// Delegate for now, eventually we want to register the modules directly
-	FileManager.handleMessage(messageSequence, messageId, messageContent, messageSource);
+	CRC_FileManager.handleMessage(messageSequence, messageId, messageContent, messageSource);
 
 }

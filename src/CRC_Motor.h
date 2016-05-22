@@ -1,7 +1,15 @@
-// Motor.h
+/***************************************************
+Uses: Module for controlling and interacting with the motors.
 
-#ifndef _MOTOR_h
-#define _MOTOR_h
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+#ifndef _CRC_MOTOR_h
+#define _CRC_MOTOR_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -9,7 +17,7 @@
 	#include "WProgram.h"
 #endif
 
-class MotorClass
+class CRC_MotorClass
 {
 private:
 	void setMotor(int mtrEnable, int mtrIn1, int mtrIn2, int intSpeed);
@@ -18,7 +26,7 @@ private:
 	 void setMotor(int leftMotor, int rightMotor);
 };
 
-extern MotorClass Motor;
+extern CRC_MotorClass CRC_Motor;
 
 #endif
 

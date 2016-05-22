@@ -1,6 +1,15 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Manages configuration persistence. this is
+stored in the /simula.cfg file on the SD card as
+a simple key-value properties file.
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
 #include <SD.h>
 
 #include "CRC_ConfigurationManager.h"
@@ -8,15 +17,15 @@
 #include "CRC_FlashHelper.h"
 #include "CRC_Globals.h"
 
-ConfigurationManagerClass ConfigurationManager;
+CRC_ConfigurationManagerClass CRC_ConfigurationManager;
 
-bool ConfigurationManagerClass::getConfig(const __FlashStringHelper * cfgName, char * szValue, size_t bufferSize)
+bool CRC_ConfigurationManagerClass::getConfig(const __FlashStringHelper * cfgName, char * szValue, size_t bufferSize)
 {
 	if (!initConfig())
 	{
 		return false;
 	}
-	File configFile = SD.open(FHM("/simula.cfg"));
+	File configFile = SD.open(CRC_FHM("/simula.cfg"));
 
 	if (findConfig(configFile, cfgName))
 	{
@@ -28,13 +37,13 @@ bool ConfigurationManagerClass::getConfig(const __FlashStringHelper * cfgName, c
 	return false;
 }
 
-bool ConfigurationManagerClass::getConfig(const char * cfgName, char * szValue, size_t bufferSize)
+bool CRC_ConfigurationManagerClass::getConfig(const char * cfgName, char * szValue, size_t bufferSize)
 {
 	if (!initConfig())
 	{
 		return false;
 	}
-	File configFile = SD.open(FHM("/simula.cfg"));
+	File configFile = SD.open(CRC_FHM("/simula.cfg"));
 
 	if (findConfig(configFile, cfgName))
 	{
@@ -47,7 +56,7 @@ bool ConfigurationManagerClass::getConfig(const char * cfgName, char * szValue, 
 	return false;
 }
 
-bool ConfigurationManagerClass::findConfig(File & configFile, const __FlashStringHelper* cfgName)
+bool CRC_ConfigurationManagerClass::findConfig(File & configFile, const __FlashStringHelper* cfgName)
 {
 	configFile.seek(0);
 
@@ -88,7 +97,7 @@ bool ConfigurationManagerClass::findConfig(File & configFile, const __FlashStrin
 	return false;
 }
 
-bool ConfigurationManagerClass::findConfig(File & configFile, const char* cfgName)
+bool CRC_ConfigurationManagerClass::findConfig(File & configFile, const char* cfgName)
 {
 	configFile.seek(0);
 
@@ -129,7 +138,7 @@ bool ConfigurationManagerClass::findConfig(File & configFile, const char* cfgNam
 	return false;
 }
 
-void ConfigurationManagerClass::readValue(File & configFile, char * szValue, size_t bufferSize)
+void CRC_ConfigurationManagerClass::readValue(File & configFile, char * szValue, size_t bufferSize)
 {
 	int next;
 	int offset = 0;
@@ -155,7 +164,7 @@ void ConfigurationManagerClass::readValue(File & configFile, char * szValue, siz
 	}
 }
 
-uint32_t ConfigurationManagerClass::getConfigUint(const __FlashStringHelper* cfgName, uint32_t defaultValue, int base)
+uint32_t CRC_ConfigurationManagerClass::getConfigUint(const __FlashStringHelper* cfgName, uint32_t defaultValue, int base)
 {
 	char temp[15];
 	if (getConfig(cfgName, temp, 20)) {
@@ -165,9 +174,9 @@ uint32_t ConfigurationManagerClass::getConfigUint(const __FlashStringHelper* cfg
 	return defaultValue;
 }
 
-bool ConfigurationManagerClass::initConfig()
+bool CRC_ConfigurationManagerClass::initConfig()
 {
-	if (SD.exists(FHM("/simula.cfg")))
+	if (SD.exists(CRC_FHM("/simula.cfg")))
 	{
 		return true;
 	}
@@ -176,9 +185,9 @@ bool ConfigurationManagerClass::initConfig()
 		return false;
 	}
 
-	Logger.log(Logger.LOG_WARN, F("Initializing new simula.cfg file"));
-	File configFile = SD.open(FHM("/simula.cfg"), FILE_WRITE);
-	configFile.write(FHM("# Simula Configuration\r\n"));
+	CRC_Logger.log(CRC_Logger.LOG_WARN, F("Initializing new simula.cfg file"));
+	File configFile = SD.open(CRC_FHM("/simula.cfg"), FILE_WRITE);
+	configFile.write(CRC_FHM("# Simula Configuration\r\n"));
 	configFile.close();
 	
 	return true;

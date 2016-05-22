@@ -1,18 +1,26 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Manages files on the SD card as based on remote
+file management commands. For direct sd manipulation
+use the SD library directly.
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include <SD.h>
 #include "CRC_FileManager.h"
 #include "CRC_Messaging.h"
 
 
-FileManagerClass FileManager;
+CRC_FileManagerClass CRC_FileManager;
 
 #define FILE_TX_BUFFER_SZ		50
 #define FILE_RX_BUFFER_SZ       50
 
-void FileManagerClass::handleMessage(uint8_t messageSequence, uint8_t messageId, void* messageContent, Messaging * messageSource)
+void CRC_FileManagerClass::handleMessage(uint8_t messageSequence, uint8_t messageId, void* messageContent, CRC_Messaging * messageSource)
 {
 	HIVEMSG_FILE_CONTROL * controlCommand = (HIVEMSG_FILE_CONTROL *) messageContent;
 
@@ -45,7 +53,7 @@ void FileManagerClass::handleMessage(uint8_t messageSequence, uint8_t messageId,
 	}
 }
 
-void FileManagerClass::handleLs(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, Messaging * messageSource)
+void CRC_FileManagerClass::handleLs(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, CRC_Messaging * messageSource)
 {
 	File dir;
 	dir = (strlen(controlCommand->filePath) == 0 ? SD.open("/") : SD.open(controlCommand->filePath));
@@ -87,7 +95,7 @@ void FileManagerClass::handleLs(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t m
 }
 
 
-void FileManagerClass::handleGet(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, Messaging * messageSource)
+void CRC_FileManagerClass::handleGet(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, CRC_Messaging * messageSource)
 {
 	if (!SD.exists(controlCommand->filePath)) {
 		messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_FAILED, ERR_FILE_NOT_FOUND);
@@ -139,7 +147,7 @@ void FileManagerClass::handleGet(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t 
 }
 
 
-void FileManagerClass::handleRm(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, Messaging * messageSource)
+void CRC_FileManagerClass::handleRm(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, CRC_Messaging * messageSource)
 {
 	if (!SD.exists(controlCommand->filePath)) 
 	{
@@ -172,7 +180,7 @@ void FileManagerClass::handleRm(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t m
 	}
 }
 
-void FileManagerClass::handleMkdir(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, Messaging * messageSource)
+void CRC_FileManagerClass::handleMkdir(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, CRC_Messaging * messageSource)
 {
 	if (!SD.exists(controlCommand->filePath))
 	{
@@ -202,7 +210,7 @@ void FileManagerClass::handleMkdir(HIVEMSG_FILE_CONTROL * controlCommand, uint8_
 	}
 }
 
-void FileManagerClass::handlePut(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, Messaging * messageSource)
+void CRC_FileManagerClass::handlePut(HIVEMSG_FILE_CONTROL * controlCommand, uint8_t messageSequence, uint8_t messageId, CRC_Messaging * messageSource)
 {
 	if (SD.exists(controlCommand->filePath))
 	{

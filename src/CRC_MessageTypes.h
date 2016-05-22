@@ -1,11 +1,17 @@
-/**
-MessageTypes.h
+/***************************************************
+Uses: Declaration of all the Communication Message Types and structures
+that are communicated on the message bus.
 
-Declaration of all the Communication Message Types
-**/
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
 
-#ifndef _MESSAGETYPES_h
-#define _MESSAGETYPES_h
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+
+#ifndef _CRC_MESSAGETYPES_h
+#define _CRC_MESSAGETYPES_h
 
 #include <stdint.h>
 

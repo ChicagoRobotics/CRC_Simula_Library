@@ -1,25 +1,19 @@
-// 
-//    FILE: StopWatch.cpp
-//  AUTHOR: Rob Tillaart
-// VERSION: 0.1.03
-// PURPOSE: Simple StopWatch library for Arduino
-//
-// The library is based upon millis() and therefore
-// has the same restrictions as millis() has wrt overflow.
-//
-// HISTORY: 
-// 0.1.00 - 2011-01-04 initial version
-// 0.1.01 - 2011-01-04 Added better state
-// 0.1.02 - 2011-06-15 Added state() + #defines + lib version
-// 0.1.03 - 2012-01-22 Added several improvements
-//             By mromani & Rob Tillaart
-// 
-// Released to the public domain
-//
+/***************************************************
+Uses: Provides a Stopwatch/Timer for calculating time differences
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Inspired By:
+URL: http://playground.arduino.cc/Code/StopWatchClass
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include "CRC_StopWatch.h"
 
-StopWatch::StopWatch(enum Resolution res)
+CRC_StopWatch::CRC_StopWatch(enum Resolution res)
 {
     _res = res;
     switch(_res) {
@@ -39,44 +33,44 @@ StopWatch::StopWatch(enum Resolution res)
     reset();
 }
 
-void StopWatch::reset()
+void CRC_StopWatch::reset()
 {
-    _state = StopWatch::RESET;
+    _state = CRC_StopWatch::RESET;
     _starttime = _stoptime = 0;
 }
 
-void StopWatch::start()
+void CRC_StopWatch::start()
 {
-    if (_state == StopWatch::RESET || _state == StopWatch::STOPPED)
+    if (_state == CRC_StopWatch::RESET || _state == CRC_StopWatch::STOPPED)
     {
-        _state = StopWatch::RUNNING;
+        _state = CRC_StopWatch::RUNNING;
         unsigned long t = _gettime();
         _starttime += t - _stoptime;
         _stoptime = t;
     }
 }
 
-unsigned long StopWatch::value()
+unsigned long CRC_StopWatch::value()
 {
-    if (_state == StopWatch::RUNNING) _stoptime = _gettime();
+    if (_state == CRC_StopWatch::RUNNING) _stoptime = _gettime();
     return _stoptime - _starttime;
 }
 
-void StopWatch::stop()
+void CRC_StopWatch::stop()
 {
-    if (_state == StopWatch::RUNNING)
+    if (_state == CRC_StopWatch::RUNNING)
     {
-        _state = StopWatch::STOPPED;
+        _state = CRC_StopWatch::STOPPED;
         _stoptime = _gettime();
     }
 }
 
-bool StopWatch::isRunning()
+bool CRC_StopWatch::isRunning()
 {
-    return (_state == StopWatch::RUNNING);
+    return (_state == CRC_StopWatch::RUNNING);
 }
 
-enum StopWatch::State StopWatch::state()
+enum CRC_StopWatch::State CRC_StopWatch::state()
 {
     return _state;
 }

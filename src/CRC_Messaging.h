@@ -1,15 +1,21 @@
-/** 
-	Messaging.h
+/***************************************************
+Uses: Wrap all communications here. We can implement swap or 
+subclass logic to switch between XBEE Zigbee (802.15.4) and XBEE Wifi 
+(802.11b/g/n) modules as well as USB communications.
 
-	Wrap all wireless communication here. We can implement swap or subclass logic to 
-	switch between XBEE Zigbee (802.15.4) and XBEE Wifi (802.11b/g/n) modules.
+The Messaging module provides for the Remote Command/Communication protocol with 
+the central application/server. Binary protocol mode is the only supported
+mode, so requires messages from CRC_MessageTypes.h
 
-	The Messaging module provide for the Remote Command/Communication protocol with 
-	the central application/server. 
-**/
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
 
-#ifndef _MESSAGING_h
-#define _MESSAGING_h
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+#ifndef _CRC_MESSAGING_h
+#define _CRC_MESSAGING_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "Arduino.h"
@@ -21,7 +27,7 @@
 
 #include "CRC_MessageTypes.h"
 
-class Messaging
+class CRC_Messaging
 {
  private:
 	 // Communications port
@@ -42,7 +48,7 @@ class Messaging
 	 HIVEMSG_ACK _ackMsg;
 	 HIVEMSG_TEXT _textMsg;
  public:
-	 Messaging();
+	 CRC_Messaging();
 	 void initZigbeeWifi(HardwareSerial & serialPort, boolean enabled); // Use the Zigbee Wifi Communications Mode
 	 void initUSB(HardwareSerial & serialPort, boolean enabled);    // Use the Serial USB Communications Mode
 
@@ -68,5 +74,5 @@ class Messaging
 };
 
 
-#endif // _MESSAGING_h
+#endif // _CRC_MESSAGING_h
 

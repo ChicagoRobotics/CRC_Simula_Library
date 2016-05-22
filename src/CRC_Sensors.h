@@ -1,7 +1,15 @@
-// Sensors.h
+/***************************************************
+Uses: Module for controlling and scanning the sensors.
 
-#ifndef _SENSORS_h
-#define _SENSORS_h
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+#ifndef _CRC_SENSORS_h
+#define _CRC_SENSORS_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -9,7 +17,7 @@
 	#include "WProgram.h"
 #endif
 
-class SensorsClass
+class CRC_SensorsClass
 {
  protected:
 	 uint16_t pingFrontMin;
@@ -41,7 +49,7 @@ class SensorsClass
 	void endScan();
 };
 
-extern SensorsClass Sensors;
+extern CRC_SensorsClass CRC_Sensors;
 
 #endif
 

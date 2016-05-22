@@ -1,13 +1,18 @@
-// 
-// Lights.cpp
-// This relies on the Soft PWM library to control fade/inensity on the LEDs
-// 
+/***************************************************
+Uses: Provides higher level functions to Control the LED outputs
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include <I2C.h>
 #include "CRC_Lights.h"
 
 
-LightsClass Lights;
+CRC_LightsClass CRC_Lights;
 
 /**
 * Use a mapping if we have wierd mappings for the LED Bank.
@@ -57,7 +62,7 @@ const uint8_t PROGMEM LIGHTS_LED_GAMMA[] =
 };
 
 
-void LightsClass::init()
+void CRC_LightsClass::init()
 {
 	PCA9635.reset();
 	PCA9635.set_sleep(0x0);
@@ -108,24 +113,24 @@ void LightsClass::init()
 * 2 = individual PWM only
 * 3 = individual and group PWM
 */
-void LightsClass::setLed(pca9635 & ledBank, uint8_t ledNum, uint8_t level)
+void CRC_LightsClass::setLed(pca9635 & ledBank, uint8_t ledNum, uint8_t level)
 {
 	ledBank.set_led_pwm(ledNum, pgm_read_byte( &LIGHTS_LED_GAMMA[level] )) ;
 }
 
 
-void LightsClass::setLeftLed(uint8_t ledNum, uint8_t level)
+void CRC_LightsClass::setLeftLed(uint8_t ledNum, uint8_t level)
 {
 	setLed(ledLeft, ledNum, level);
 }
 
-void LightsClass::setRightLed(uint8_t ledNum, uint8_t level)
+void CRC_LightsClass::setRightLed(uint8_t ledNum, uint8_t level)
 {
 	setLed(ledRight, ledNum, level);
 }
 
 
-boolean LightsClass::setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue)
+boolean CRC_LightsClass::setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue)
 {
 	if (ledId >= LIGHTS_LED_DEFINITION_COUNT) {
 		return false;
@@ -148,7 +153,8 @@ boolean LightsClass::setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8_t b
 }
 
 
-void LightsClass::display(unsigned long now)
+void CRC_LightsClass::updateDisplayState(unsigned long now)
 {
-	// TODO, Blink control will occur here
+	// TODO, currently, NOP
+	// Called from Loop, so we can inject additional behavior
 }

@@ -1,16 +1,18 @@
-#ifndef StopWatch_h
-#define StopWatch_h
-// 
-//    FILE: StopWatch.h
-//  AUTHOR: Rob Tillaart
-// PURPOSE: Simple StopWatch library for Arduino
-// HISTORY: See StopWatch.cpp
-//     URL: http://playground.arduino.cc/Code/StopWatchClass
-//
-// Released to the public domain
-//
+/***************************************************
+Uses: Provides a Stopwatch/Timer for calculating time differences
 
-#define STOPWATCH_LIB_VERSION "0.1.03"
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Inspired By: 
+URL: http://playground.arduino.cc/Code/StopWatchClass
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+#ifndef CRC_StopWatch_h
+#define CRC_StopWatch_h
 
 #if ARDUINO >= 100
     #include "Arduino.h"
@@ -18,12 +20,12 @@
     #include "WProgram.h"
 #endif
 
-class StopWatch 
+class CRC_StopWatch 
 {
 public:
     enum State { RESET, RUNNING, STOPPED };
     enum Resolution { MILLIS, MICROS, SECONDS };
-    StopWatch(enum Resolution res = MILLIS);
+	CRC_StopWatch(enum Resolution res = MILLIS);
     void start();
     void stop(); 
     void reset();

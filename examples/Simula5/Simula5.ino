@@ -28,33 +28,30 @@ See README.md for license details
 #include "CRC_FileManager.h"
 #include "CRC_Motor.h"
 
-// ID of the UNIT/TODO will change from an id
-uint8_t g_intUnitID = 0x01;
-
 unsigned long lastMessageTime;		// Last Time a message was recieved by this Unit
 
 struct HIVEMSG_STATE UnitState;		// Current state of the Unit
-Messaging WirelessComm;				// For Remote/Wireless Access
-Messaging TerminalComm;               // Local diagnostic access
-ZigbeeController Zigbee;
+CRC_Messaging WirelessComm;			// For Remote/Wireless Access
+CRC_Messaging TerminalComm;         // Local diagnostic access
+CRC_ZigbeeController Zigbee;
 
 void setup()
 {
 	// Pass the reference to the Serial Port we have UsbComm connector on.
 	TerminalComm.initUSB(Serial, true);		  
-	Logger.addLogDestination(&TerminalComm);
+	CRC_Logger.addLogDestination(&TerminalComm);
 
-	Logger.log(Logger.LOG_INFO, F("Unit bootup sequence"));
+	CRC_Logger.log(CRC_Logger.LOG_INFO, F("Unit bootup sequence"));
 
-	Hardware.init();
-	Lights.init();
+	CRC_Hardware.init();
+	CRC_Lights.init();
 
 	Zigbee.init(Serial2, WirelessComm);
-	Logger.addLogDestination(&WirelessComm);
+	CRC_Logger.addLogDestination(&WirelessComm);
 
 	lastMessageTime = millis();
 
-	Logger.log(Logger.LOG_INFO, F("Unit bootup completed"));
+	CRC_Logger.log(CRC_Logger.LOG_INFO, F("Unit bootup completed"));
 }
 
 
@@ -62,9 +59,9 @@ void loop()
 {
 	unsigned long now = millis();
 
-	Hardware.startScanStatus(now);
-	AudioManager.updateAudioState();
-	Lights.display(now);
+	CRC_Hardware.startScanStatus(now);
+	CRC_AudioManager.updateAudioState();
+	CRC_Lights.updateDisplayState(now);
 
 	// Start::Wireless
 	if (Zigbee.isReady())
@@ -84,5 +81,5 @@ void loop()
 	}
 	// End::Diagnostic/Usb Port
 
-	Hardware.endScanStatus(now);
+	CRC_Hardware.endScanStatus(now);
 }

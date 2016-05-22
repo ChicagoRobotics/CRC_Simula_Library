@@ -1,6 +1,12 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Module for controlling and scanning the sensors.
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include "CRC_Sensors.h"
 #include "CRC_Globals.h"
@@ -8,56 +14,56 @@
 #include "CRC_Hardware.h"
 #include "CRC_ConfigurationManager.h"
 
-SensorsClass Sensors;
+CRC_SensorsClass CRC_Sensors;
 
 #define THRESHOLD_IR_BOOLEAN      200
 #define PING_TIMEOUT              1000 * 100
 
-void SensorsClass::init()
+void CRC_SensorsClass::init()
 {
 	lastIrPollSensors = 0;
 
-	digitalWrite(Hardware.pinFrontPingTrigger, LOW);
+	digitalWrite(CRC_Hardware.pinFrontPingTrigger, LOW);
 
 	// Ping Configurations, defaults with overrides in the
 	// Simula config file
-	pingFrontMin = ConfigurationManager.getConfigUint(F("ping.zero"), 412);
-	pingFrontSlope = ConfigurationManager.getConfigUint(F("ping.slope"), 58);
-	pingFrontMax = ConfigurationManager.getConfigUint(F("ping.max"), 3355);
+	pingFrontMin = CRC_ConfigurationManager.getConfigUint(F("ping.zero"), 412);
+	pingFrontSlope = CRC_ConfigurationManager.getConfigUint(F("ping.slope"), 58);
+	pingFrontMax = CRC_ConfigurationManager.getConfigUint(F("ping.max"), 3355);
 }
 
-void SensorsClass::startScan()
+void CRC_SensorsClass::startScan()
 {
 	pollSensors();
 }
 
-void SensorsClass::endScan()
+void CRC_SensorsClass::endScan()
 {
 	pollSensors();
 
 }
 
-void SensorsClass::readAndSaveSensors()
+void CRC_SensorsClass::readAndSaveSensors()
 {
-	digitalWrite(Hardware.pinFrontPingTrigger, HIGH);
+	digitalWrite(CRC_Hardware.pinFrontPingTrigger, HIGH);
 
-	irLeft = analogRead(Hardware.pinIrLeft);
-	irFrontLeft = analogRead(Hardware.pinIrFrontLeft);
-	irFrontRight = analogRead(Hardware.pinIrFrontRight);
-	irRight = analogRead(Hardware.pinIrRight);
-	irFront = analogRead(Hardware.pinIrFront);
-	irFrontLeftEdge = analogRead(Hardware.pinIrFrontLeftEdge);
-	irFrontRightEdge = analogRead(Hardware.pinIrFrontRightEdge);
+	irLeft = analogRead(CRC_Hardware.pinIrLeft);
+	irFrontLeft = analogRead(CRC_Hardware.pinIrFrontLeft);
+	irFrontRight = analogRead(CRC_Hardware.pinIrFrontRight);
+	irRight = analogRead(CRC_Hardware.pinIrRight);
+	irFront = analogRead(CRC_Hardware.pinIrFront);
+	irFrontLeftEdge = analogRead(CRC_Hardware.pinIrFrontLeftEdge);
+	irFrontRightEdge = analogRead(CRC_Hardware.pinIrFrontRightEdge);
 	lastIrPollSensors = millis();
 
 	// readAndSavePing();
 }
 
-void SensorsClass::readAndSavePing()
+void CRC_SensorsClass::readAndSavePing()
 {
 	// Read Ping Sensors
-	digitalWrite(Hardware.pinFrontPingTrigger, LOW);
-	UnitState.pingFrontRaw = pulseIn(Hardware.pinFrontPingEcho, PING_TIMEOUT);
+	digitalWrite(CRC_Hardware.pinFrontPingTrigger, LOW);
+	UnitState.pingFrontRaw = pulseIn(CRC_Hardware.pinFrontPingEcho, PING_TIMEOUT);
 
 	if (UnitState.pingFrontRaw > pingFrontMax) {
 		// Treat the Ping as Out of Range (Infinite)
@@ -70,7 +76,7 @@ void SensorsClass::readAndSavePing()
 	}
 }
 
-void SensorsClass::pollSensors()
+void CRC_SensorsClass::pollSensors()
 {
 	unsigned long now = millis();
 	unsigned long diff = now - lastIrPollSensors;
@@ -94,16 +100,16 @@ void SensorsClass::pollSensors()
 		// We lost some loop time, force a blocking poll
 		readAndSaveSensors();
 		delay(5);
-		Logger.logF(Logger.LOG_TRACE, F("Forced IR Read: %ul"), diff);
+		CRC_Logger.logF(CRC_Logger.LOG_TRACE, F("Forced IR Read: %ul"), diff);
 	}
 
-	digitalWrite(Hardware.pinFrontPingTrigger, HIGH);
-	UnitState.irLeft = !booleanIrCheck(irLeft, analogRead(Hardware.pinIrLeft), THRESHOLD_IR_BOOLEAN);
-	UnitState.irFrontLeft = !booleanIrCheck(irFrontLeft, analogRead(Hardware.pinIrFrontLeft), THRESHOLD_IR_BOOLEAN);
-	UnitState.irFrontRight = !booleanIrCheck(irFrontRight, analogRead(Hardware.pinIrFrontRight), THRESHOLD_IR_BOOLEAN);
-	UnitState.irRight = !booleanIrCheck(irRight, analogRead(Hardware.pinIrRight), THRESHOLD_IR_BOOLEAN);
-	UnitState.irFrontLeftEdge = booleanIrCheck(irFrontLeftEdge, analogRead(Hardware.pinIrFrontLeftEdge), THRESHOLD_IR_BOOLEAN);
-	UnitState.irFrontRightEdge = booleanIrCheck(irFrontRightEdge, analogRead(Hardware.pinIrFrontRightEdge), THRESHOLD_IR_BOOLEAN);
+	digitalWrite(CRC_Hardware.pinFrontPingTrigger, HIGH);
+	UnitState.irLeft = !booleanIrCheck(irLeft, analogRead(CRC_Hardware.pinIrLeft), THRESHOLD_IR_BOOLEAN);
+	UnitState.irFrontLeft = !booleanIrCheck(irFrontLeft, analogRead(CRC_Hardware.pinIrFrontLeft), THRESHOLD_IR_BOOLEAN);
+	UnitState.irFrontRight = !booleanIrCheck(irFrontRight, analogRead(CRC_Hardware.pinIrFrontRight), THRESHOLD_IR_BOOLEAN);
+	UnitState.irRight = !booleanIrCheck(irRight, analogRead(CRC_Hardware.pinIrRight), THRESHOLD_IR_BOOLEAN);
+	UnitState.irFrontLeftEdge = booleanIrCheck(irFrontLeftEdge, analogRead(CRC_Hardware.pinIrFrontLeftEdge), THRESHOLD_IR_BOOLEAN);
+	UnitState.irFrontRightEdge = booleanIrCheck(irFrontRightEdge, analogRead(CRC_Hardware.pinIrFrontRightEdge), THRESHOLD_IR_BOOLEAN);
 	
 	// TODO, Need to handle front IR sensors
 	
@@ -113,7 +119,7 @@ void SensorsClass::pollSensors()
 	lastIrPollSensors = 0;
 }
 
-boolean SensorsClass::booleanIrCheck(int firstValue, int secondValue, int minTreshold)
+boolean CRC_SensorsClass::booleanIrCheck(int firstValue, int secondValue, int minTreshold)
 {
 	if (firstValue >= minTreshold && secondValue >= minTreshold) {
 		return true;
@@ -122,11 +128,11 @@ boolean SensorsClass::booleanIrCheck(int firstValue, int secondValue, int minTre
 	return false;
 }
 
-void SensorsClass::debugLogBooleanSensor(const  __FlashStringHelper* message, boolean state)
+void CRC_SensorsClass::debugLogBooleanSensor(const  __FlashStringHelper* message, boolean state)
 {
 	if (state)
 	{
-		Logger.log(Logger.LOG_INFO, message);
+		CRC_Logger.log(CRC_Logger.LOG_INFO, message);
 	}
 
 }

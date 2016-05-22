@@ -1,11 +1,18 @@
-/**
-* ConfigurationManager.h
-* Manages configuration persistence. Currently this is
-* stored in the /.config file on the SD card.
-**/ 
+/***************************************************
+Uses: Manages configuration persistence. this is
+stored in the /simula.cfg file on the SD card as 
+a simple key-value properties file.
 
-#ifndef _CONFIGURATIONMANAGER_h
-#define _CONFIGURATIONMANAGER_h
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+
+#ifndef _CRC_CONFIGURATIONMANAGER_h
+#define _CRC_CONFIGURATIONMANAGER_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -15,7 +22,7 @@
 
 #include <SD.h>
 
-class ConfigurationManagerClass
+class CRC_ConfigurationManagerClass
 {
  private:
 	 bool findConfig(File & configFile, const __FlashStringHelper* cfgName);
@@ -31,7 +38,7 @@ class ConfigurationManagerClass
 	 // void setConfig(const char * cfgName, char * szValue);
 };
 
-extern ConfigurationManagerClass ConfigurationManager;
+extern CRC_ConfigurationManagerClass CRC_ConfigurationManager;
 
 #endif
 

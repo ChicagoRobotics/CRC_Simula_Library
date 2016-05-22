@@ -1,9 +1,18 @@
-/**
-** Messaging.cpp
-** Note: We could use # define here to separate the 802.15.4 vs 802.11b/g/n
-** code if we want to save prog-space. I.E. Flash a unit with the specific support
-** it needs.
-**/
+/***************************************************
+Uses: Wrap all communications here. We can implement swap or
+subclass logic to switch between XBEE Zigbee (802.15.4) and XBEE Wifi
+(802.11b/g/n) modules as well as USB communications.
+
+The Messaging module provides for the Remote Command/Communication protocol with
+the central application/server. Binary protocol mode is the only supported
+mode, so requires messages from CRC_MessageTypes.h
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include "CRC_Messaging.h"
 #include "CRC_Globals.h"
@@ -11,7 +20,17 @@
 
 #define XBEE_START				'*'
 
-Messaging::Messaging()
+// Data Transfer State Definitions
+static const uint8_t COM_START = 0;  // Waiting for Message
+static const uint8_t COM_ADDRESS = 1; // Waiting for Message Address
+static const uint8_t COM_TRANSFER = 2; // Address Verified, Reading message
+static const uint8_t COM_COMPLETED = 3; // Message Completed and verified
+
+// ID of the UNIT
+// TODO this field is deprecated for now
+static const uint8_t g_intUnitID = 0x01;
+
+CRC_Messaging::CRC_Messaging()
 {
 	_isEnabled = false;
 }
@@ -19,7 +38,7 @@ Messaging::Messaging()
 /**
 * Initializes to use the Binary communications protocol
 **/
-void Messaging::initUSB(HardwareSerial & serialPort, boolean enabled)
+void CRC_Messaging::initUSB(HardwareSerial & serialPort, boolean enabled)
 {
 	_serialPort = &serialPort;
 	_serialPort->begin(115200, SERIAL_8N1);
@@ -31,7 +50,7 @@ void Messaging::initUSB(HardwareSerial & serialPort, boolean enabled)
 /**
 * Initializes to use the Wifi communications protocol which is all we have right now
 **/
-void Messaging::initZigbeeWifi(HardwareSerial & serialPort, boolean enabled)
+void CRC_Messaging::initZigbeeWifi(HardwareSerial & serialPort, boolean enabled)
 {
 	_serialPort = &serialPort;
 	_readStatus = COM_START;
@@ -43,7 +62,7 @@ void Messaging::initZigbeeWifi(HardwareSerial & serialPort, boolean enabled)
 * This function implements a FSM. 
 * Commands need to start with a command delimiter
 **/
-bool Messaging::hasMessage()
+bool CRC_Messaging::hasMessage()
 {
 	return readMessage();
 }
@@ -51,7 +70,7 @@ bool Messaging::hasMessage()
 /**
 * Clears the current data buffer. Discards any messages currently read.
 **/
-void Messaging::clearBuffer()
+void CRC_Messaging::clearBuffer()
 {
 	memset(_chrDataBuffer, 0, sizeof(_chrDataBuffer));
 	_bufferPos = 0;
@@ -72,7 +91,7 @@ void Messaging::clearBuffer()
 * [msg]     Message characters
 * [chksum]  Unsigned char indicating the checksum of the message. 
 **/
-bool Messaging::readMessage()
+bool CRC_Messaging::readMessage()
 {
 	if (!_isEnabled) {
 		return false;
@@ -197,7 +216,7 @@ bool Messaging::readMessage()
 			// Serial.print(_calcChecksum, DEC);
 			// Serial.print(", Expected Checksum");
 			// Serial.println(_messageChecksum, DEC);
-			Logger.logF(Logger.LOG_ERROR, F("Bad Checksum, Calc: %d,  Expected Checksum, %d"), _calcChecksum, _messageChecksum);
+			CRC_Logger.logF(CRC_Logger.LOG_ERROR, F("Bad Checksum, Calc: %d,  Expected Checksum, %d"), _calcChecksum, _messageChecksum);
 
 			// Checksum mismatch, discard this message
 			clearBuffer();
@@ -212,7 +231,7 @@ bool Messaging::readMessage()
 * Sends messages to the receiver. This is assuming a single reciever. How are we handling destination
 * addresses?
 */
-void Messaging::sendMessage(uint8_t messageId, uint8_t * messageBuffer, uint16_t messageLength)
+void CRC_Messaging::sendMessage(uint8_t messageId, uint8_t * messageBuffer, uint16_t messageLength)
 {
 	if (!_isEnabled) {
 		return;
@@ -223,7 +242,7 @@ void Messaging::sendMessage(uint8_t messageId, uint8_t * messageBuffer, uint16_t
 /**
 * Flush any pending output messages
 */
-void Messaging::flush()
+void CRC_Messaging::flush()
 {
 	_serialPort->flush();
 }
@@ -240,7 +259,7 @@ void Messaging::flush()
 * [msg]     Message characters
 * [chksum]  Unsigned char indicating the checksum of the message.
 **/
-void Messaging::sendMessageImpl(uint8_t messageId, uint8_t * messageBuffer, uint16_t messageLength)
+void CRC_Messaging::sendMessageImpl(uint8_t messageId, uint8_t * messageBuffer, uint16_t messageLength)
 {
 	// Make sure any previous messages have been sent
 	_serialPort->flush(); 
@@ -265,7 +284,7 @@ void Messaging::sendMessageImpl(uint8_t messageId, uint8_t * messageBuffer, uint
 /**
 * Calculates the single byte checksum for the passed in buffer
 **/
-uint8_t Messaging::calculateChecksum(uint8_t * messageBuffer, uint16_t messageLength)
+uint8_t CRC_Messaging::calculateChecksum(uint8_t * messageBuffer, uint16_t messageLength)
 {
 	uint8_t checksum = 0;
 	for (uint16_t i = 0; i < messageLength; i++)
@@ -279,7 +298,7 @@ uint8_t Messaging::calculateChecksum(uint8_t * messageBuffer, uint16_t messageLe
 /**
 * Sends the ack message in response to a recieved message
 **/
-void Messaging::sendAck(uint8_t messageSequence, uint8_t messageId, uint8_t ackCode, uint8_t ackParam)
+void CRC_Messaging::sendAck(uint8_t messageSequence, uint8_t messageId, uint8_t ackCode, uint8_t ackParam)
 {
 	flush(); // Ensure we don't have any pending messages, since we reuse the msg structure
 	_ackMsg.sequence = messageSequence;
@@ -292,7 +311,7 @@ void Messaging::sendAck(uint8_t messageSequence, uint8_t messageId, uint8_t ackC
 /**
 * Sends Text messages, generally used for diagnostics.
 **/
-void Messaging::sendText(const char* message)
+void CRC_Messaging::sendText(const char* message)
 {
 	flush(); // Ensure we don't have any pending messages, since we reuse the msg structure
 	strncpy(_textMsg.text, message, 60);
@@ -302,7 +321,7 @@ void Messaging::sendText(const char* message)
 /**
 * Sends Text messages, generally used for diagnostics.
 **/
-void Messaging::sendText(const __FlashStringHelper* message)
+void CRC_Messaging::sendText(const __FlashStringHelper* message)
 {
 	flush(); // Ensure we don't have any pending messages, since we reuse the msg structure
 	strncpy_P(_textMsg.text, (char *)message, 60);
@@ -314,7 +333,7 @@ void Messaging::sendText(const __FlashStringHelper* message)
 * sprintf so caveats apply. If you want to sent floats/doubles, create a String() object,
 * append the float and send the float as text instead.
 **/
-void Messaging::sendTextF(const char* format, ...)
+void CRC_Messaging::sendTextF(const char* format, ...)
 {
 	flush(); // Ensure we don't have any pending messages, since we reuse the msg structure
 	va_list argptr;
@@ -329,7 +348,7 @@ void Messaging::sendTextF(const char* format, ...)
 * sprintf so caveats apply. If you want to sent floats/doubles, create a String() object,
 * append the float and send the float as text instead.
 **/
-void Messaging::sendTextF(const __FlashStringHelper* format, ...)
+void CRC_Messaging::sendTextF(const __FlashStringHelper* format, ...)
 {
 	flush(); // Ensure we don't have any pending messages, since we reuse the msg structure
 	va_list argptr;
@@ -342,7 +361,7 @@ void Messaging::sendTextF(const __FlashStringHelper* format, ...)
 /**
 * Writes raw bytes to the stream
 **/
-void Messaging::writeBytes(uint8_t * messageBuffer, uint16_t bufferLength)
+void CRC_Messaging::writeBytes(uint8_t * messageBuffer, uint16_t bufferLength)
 {
 	if (!_isEnabled) {
 		return;
@@ -354,7 +373,7 @@ void Messaging::writeBytes(uint8_t * messageBuffer, uint16_t bufferLength)
 /**
 * Reads raw  until the buffer is filled
 **/
-uint16_t Messaging::readBytes(uint8_t * messageBuffer, uint16_t bufferLength)
+uint16_t CRC_Messaging::readBytes(uint8_t * messageBuffer, uint16_t bufferLength)
 {
 	if (!_isEnabled) {
 		return 0;

@@ -1,6 +1,14 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Hardware abstraction layer and definitions for the
+Simula Board. Provides the constant definitions for each
+board revision, as well as module initializations.
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include <i2c_device.h>
 #include <I2C.h>
@@ -13,9 +21,9 @@
 #include "CRC_Sensors.h"
 
 // Global Instance
-HardwareClass Hardware;
+CRC_HardwareClass CRC_Hardware;
 
-void HardwareClass::init()
+void CRC_HardwareClass::init()
 {
 #if defined(__AVR_ATmega2560__) 
 	UnitState.totalRam = 8192; // AT Mega
@@ -34,16 +42,16 @@ void HardwareClass::init()
 
 	UnitState.sdCard = SD.begin(sdcard_cs);
 
-	if (AudioManager.init()) {
+	if (CRC_AudioManager.init()) {
 		UnitState.audioPlayer = true;
 	}
 
-	Sensors.init();
+	CRC_Sensors.init();
 }
 
 
 
-void HardwareClass::setupPins()
+void CRC_HardwareClass::setupPins()
 {
 	//Set up audio amplifier and audio player
 	pinMode(vs1053_dreq, INPUT);
@@ -94,21 +102,21 @@ void HardwareClass::setupPins()
 	pinMode(pinFrontPingEcho, INPUT);
 }
 
-void HardwareClass::setupSPI()
+void CRC_HardwareClass::setupSPI()
 {
 	SPI.begin();
 	SPI.setDataMode(SPI_MODE0);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.setClockDivider(SPI_CLOCK_DIV128);
 }
-void HardwareClass::setupI2C()
+void CRC_HardwareClass::setupI2C()
 {
 	I2c.begin();
 	I2c.timeOut(500);
 }
 
 
-void HardwareClass::startScanStatus(unsigned long startTime)
+void CRC_HardwareClass::startScanStatus(unsigned long startTime)
 {
 	// Scan Free Ram START
 	// Keep this block as is at start of this method
@@ -117,12 +125,12 @@ void HardwareClass::startScanStatus(unsigned long startTime)
 	UnitState.freeRam = (uint16_t)(&v - (__brkval == 0 ? (uint16_t)&__heap_start : (uint16_t)__brkval));
 	// Scan Free Ram END
 
-	UnitState.audioPlaying = AudioManager.isPlayingAudio();
+	UnitState.audioPlaying = CRC_AudioManager.isPlayingAudio();
 
-	Sensors.startScan();
+	CRC_Sensors.startScan();
 };
 
-void HardwareClass::endScanStatus(unsigned long startTime)
+void CRC_HardwareClass::endScanStatus(unsigned long startTime)
 {
 	unsigned long endTime = millis();
 	unsigned long loopTime = endTime - startTime;
@@ -130,7 +138,7 @@ void HardwareClass::endScanStatus(unsigned long startTime)
 	UnitState.loopMinTimeMillis = min(UnitState.loopMinTimeMillis + 1, loopTime);  // Min Time in millis
 	UnitState.loopMaxTimeMillis = max(UnitState.loopMaxTimeMillis, loopTime);  // Max Time in millis
 
-	Sensors.endScan();
+	CRC_Sensors.endScan();
 }
 
 

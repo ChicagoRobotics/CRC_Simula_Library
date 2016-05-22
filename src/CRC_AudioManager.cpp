@@ -1,13 +1,22 @@
-// 
-// This is implemented, talking directly to the VS1053 Chip. Eventually,
-// we will want to make the VS1053 code as a separate module. 
-// 
+/***************************************************
+Uses: Provides methods for working with Audio, and abstracts
+out the VS1053 module.
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Inspired By:
+URL: https://github.com/adafruit/Adafruit_VS1053_Library
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include "CRC_AudioManager.h"
 #include "CRC_Hardware.h"
 #include <SPI.h>
 
-AudioManagerClass AudioManager;
+CRC_AudioManagerClass CRC_AudioManager;
 
 // START VS1053 Definitions (TODO, delete/comment out what is not used)
 #define VS1053_REG_MODE  0x00
@@ -56,7 +65,7 @@ AudioManagerClass AudioManager;
 // END VS1053 Definitions
 
 
-boolean AudioManagerClass::init()
+boolean CRC_AudioManagerClass::init()
 {
 	_isPlayingAudio = false;
 	reset();
@@ -68,7 +77,7 @@ boolean AudioManagerClass::init()
 	return (vs1053begin == 4);
 }
 
-void AudioManagerClass::dumpRegs(void) {
+void CRC_AudioManagerClass::dumpRegs(void) {
 	Serial.begin(115200, SERIAL_8N1);
 	Serial.print("Mode = 0x"); Serial.println(sciRead(VS1053_REG_MODE), HEX);
 	Serial.print("Stat = 0x"); Serial.println(sciRead(VS1053_REG_STATUS), HEX);
@@ -77,15 +86,15 @@ void AudioManagerClass::dumpRegs(void) {
 	Serial.end();
 }
 
-void AudioManagerClass::reset()
+void CRC_AudioManagerClass::reset()
 {
-	digitalWrite(Hardware.ampEnable, LOW);
+	digitalWrite(CRC_Hardware.ampEnable, LOW);
 	_ampEnabled = false;
-	digitalWrite(Hardware.vs1053_reset, LOW);
+	digitalWrite(CRC_Hardware.vs1053_reset, LOW);
 	delay(100);
-	digitalWrite(Hardware.vs1053_reset, HIGH);
-	digitalWrite(Hardware.vs1053_cs, HIGH);
-	digitalWrite(Hardware.vs1053_dcs, HIGH);
+	digitalWrite(CRC_Hardware.vs1053_reset, HIGH);
+	digitalWrite(CRC_Hardware.vs1053_cs, HIGH);
+	digitalWrite(CRC_Hardware.vs1053_dcs, HIGH);
 	delay(100);
 	softReset();
 	delay(100);
@@ -93,12 +102,12 @@ void AudioManagerClass::reset()
 	sciWrite(VS1053_REG_CLOCKF, 0x6000);
 }
 
-void AudioManagerClass::softReset(void) {
+void CRC_AudioManagerClass::softReset(void) {
 	sciWrite(VS1053_REG_MODE, VS1053_MODE_SM_SDINEW | VS1053_MODE_SM_RESET);
 	delay(100);
 }
 
-void AudioManagerClass::stopAudio()
+void CRC_AudioManagerClass::stopAudio()
 {
 	if (!_isPlayingAudio) 
 	{
@@ -109,7 +118,7 @@ void AudioManagerClass::stopAudio()
 	sciWrite(VS1053_REG_MODE, VS1053_MODE_SM_LINE1 | VS1053_MODE_SM_SDINEW | VS1053_MODE_SM_CANCEL);
 
 	// Turn off amp
-	digitalWrite(Hardware.ampEnable, LOW);
+	digitalWrite(CRC_Hardware.ampEnable, LOW);
 	_ampEnabled = false;
 
 	// Close the Current State
@@ -117,44 +126,44 @@ void AudioManagerClass::stopAudio()
 	//currentTrack.close();
 }
 
-void AudioManagerClass::spiwrite(uint8_t c)
+void CRC_AudioManagerClass::spiwrite(uint8_t c)
 {
 	SPI.transfer(c);
 }
 
-void AudioManagerClass::sciWrite(uint8_t addr, uint16_t data) {
+void CRC_AudioManagerClass::sciWrite(uint8_t addr, uint16_t data) {
 	SPI.beginTransaction(VS1053_CONTROL_SPI_SETTING);
-	digitalWrite(Hardware.vs1053_cs, LOW);
+	digitalWrite(CRC_Hardware.vs1053_cs, LOW);
 	spiwrite(VS1053_SCI_WRITE);
 	spiwrite(addr);
 	spiwrite(data >> 8);
 	spiwrite(data & 0xFF);
-	digitalWrite(Hardware.vs1053_cs, HIGH);
+	digitalWrite(CRC_Hardware.vs1053_cs, HIGH);
 	SPI.endTransaction();
 }
 
-uint16_t AudioManagerClass::sciRead(uint8_t addr) {
+uint16_t CRC_AudioManagerClass::sciRead(uint8_t addr) {
 	uint16_t data;
 	SPI.beginTransaction(VS1053_CONTROL_SPI_SETTING);
-	digitalWrite(Hardware.vs1053_cs, LOW);
+	digitalWrite(CRC_Hardware.vs1053_cs, LOW);
 	spiwrite(VS1053_SCI_READ);
 	spiwrite(addr);
 	delayMicroseconds(10);
 	data = spiread();
 	data <<= 8;
 	data |= spiread();
-	digitalWrite(Hardware.vs1053_cs, HIGH);
+	digitalWrite(CRC_Hardware.vs1053_cs, HIGH);
 	SPI.endTransaction();
 
 	return data;
 }
 
-uint8_t AudioManagerClass::spiread(void)
+uint8_t CRC_AudioManagerClass::spiread(void)
 {
 	return SPI.transfer(0x00);
 }
 
-boolean AudioManagerClass::startAudioFile(const char * fileName)
+boolean CRC_AudioManagerClass::startAudioFile(const char * fileName)
 {
 	// reset current playback if any
 	sciWrite(VS1053_REG_MODE, VS1053_MODE_SM_LINE1 | VS1053_MODE_SM_SDINEW);
@@ -174,7 +183,7 @@ boolean AudioManagerClass::startAudioFile(const char * fileName)
 
 	_isPlayingAudio = true;
 
-	digitalWrite(Hardware.ampEnable, HIGH);
+	digitalWrite(CRC_Hardware.ampEnable, HIGH);
 	_ampEnabled = true;
 	// wait till its ready for data
 	while (!readyForAudioData());
@@ -186,7 +195,7 @@ boolean AudioManagerClass::startAudioFile(const char * fileName)
 	return true;
 }
 
-boolean AudioManagerClass::playFullAudioFile(const char *trackname)
+boolean CRC_AudioManagerClass::playFullAudioFile(const char *trackname)
 {
 	if (!startAudioFile(trackname)) return false;
 
@@ -198,12 +207,12 @@ boolean AudioManagerClass::playFullAudioFile(const char *trackname)
 
 }
 
-boolean AudioManagerClass::readyForAudioData()
+boolean CRC_AudioManagerClass::readyForAudioData()
 {
-	return digitalRead(Hardware.vs1053_dreq);
+	return digitalRead(CRC_Hardware.vs1053_dreq);
 }
 
-void AudioManagerClass::feedAudioBuffer()
+void CRC_AudioManagerClass::feedAudioBuffer()
 {
 	static boolean running = false;
 
@@ -248,41 +257,41 @@ void AudioManagerClass::feedAudioBuffer()
 	return;
 }
 
-void AudioManagerClass::playAudioData(uint8_t *buffer, uint8_t buffsiz) {
+void CRC_AudioManagerClass::playAudioData(uint8_t *buffer, uint8_t buffsiz) {
 	SPI.beginTransaction(VS1053_DATA_SPI_SETTING);
 
-	digitalWrite(Hardware.vs1053_dcs, LOW);
+	digitalWrite(CRC_Hardware.vs1053_dcs, LOW);
 	for (uint8_t i = 0; i<buffsiz; i++) {
 		spiwrite(buffer[i]);
 	}
-	digitalWrite(Hardware.vs1053_dcs, HIGH);
+	digitalWrite(CRC_Hardware.vs1053_dcs, HIGH);
 	SPI.endTransaction();
 }
 
-void AudioManagerClass::setAmpGain(uint8_t level)
+void CRC_AudioManagerClass::setAmpGain(uint8_t level)
 {
 	switch (level)
 	{
 	case 0:
-		digitalWrite(Hardware.ampGain0, LOW);
-		digitalWrite(Hardware.ampGain1, LOW);
+		digitalWrite(CRC_Hardware.ampGain0, LOW);
+		digitalWrite(CRC_Hardware.ampGain1, LOW);
 		break;
 	case 1:
-		digitalWrite(Hardware.ampGain0, HIGH);
-		digitalWrite(Hardware.ampGain1, LOW);
+		digitalWrite(CRC_Hardware.ampGain0, HIGH);
+		digitalWrite(CRC_Hardware.ampGain1, LOW);
 		break;
 	case 2:
-		digitalWrite(Hardware.ampGain0, LOW);
-		digitalWrite(Hardware.ampGain1, HIGH);
+		digitalWrite(CRC_Hardware.ampGain0, LOW);
+		digitalWrite(CRC_Hardware.ampGain1, HIGH);
 		break;
 	case 3:
-		digitalWrite(Hardware.ampGain0, HIGH);
-		digitalWrite(Hardware.ampGain1, HIGH);
+		digitalWrite(CRC_Hardware.ampGain0, HIGH);
+		digitalWrite(CRC_Hardware.ampGain1, HIGH);
 		break;
 	}
 }
 
-void AudioManagerClass::setVolume(uint8_t left, uint8_t right)
+void CRC_AudioManagerClass::setVolume(uint8_t left, uint8_t right)
 {
 	uint16_t v;
 	v = left;
@@ -292,13 +301,13 @@ void AudioManagerClass::setVolume(uint8_t left, uint8_t right)
 	sciWrite(VS1053_REG_VOLUME, v);
 }
 
-void AudioManagerClass::updateAudioState()
+void CRC_AudioManagerClass::updateAudioState()
 { 
 	feedAudioBuffer(); 
 
 	if (!_isPlayingAudio && _ampEnabled && ( (millis() - _lastAudioFeedTime) > 2000))
 	{
-		digitalWrite(Hardware.ampEnable, LOW);
+		digitalWrite(CRC_Hardware.ampEnable, LOW);
 		_ampEnabled = false;
 	}
 }

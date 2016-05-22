@@ -1,7 +1,20 @@
-// AudioManager.h
+/***************************************************
+Uses: Provides methods for working with Audio, and abstracts
+out the VS1053 module.
 
-#ifndef _AUDIOMANAGER_h
-#define _AUDIOMANAGER_h
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Inspired By:
+URL: https://github.com/adafruit/Adafruit_VS1053_Library
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+
+#ifndef _CRC_AUDIOMANAGER_h
+#define _CRC_AUDIOMANAGER_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -13,11 +26,9 @@
 
 #define VS1053_DATABUFFERLEN 32
 
-class AudioManagerClass
+class CRC_AudioManagerClass
 {
 private:
-
-protected:
 	boolean _isPlayingAudio;
 	boolean _ampEnabled;
 	uint8_t _mp3buffer[VS1053_DATABUFFERLEN];
@@ -51,7 +62,7 @@ protected:
 	void updateAudioState();
 };
 
-extern AudioManagerClass AudioManager;
+extern CRC_AudioManagerClass CRC_AudioManager;
 
 #endif
 

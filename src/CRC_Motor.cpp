@@ -1,15 +1,21 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Module for controlling and interacting with the motors.
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include "CRC_Motor.h"
 #include "CRC_Globals.h"
 #include "CRC_Hardware.h"
 
-MotorClass Motor;
+CRC_MotorClass CRC_Motor;
 
 
-void MotorClass::setMotor(int mtrEnable, int mtrIn1, int mtrIn2, int intSpeed) {
+void CRC_MotorClass::setMotor(int mtrEnable, int mtrIn1, int mtrIn2, int intSpeed) {
 	boolean in1 = HIGH;
 	boolean in2 = LOW;
 
@@ -34,10 +40,10 @@ void MotorClass::setMotor(int mtrEnable, int mtrIn1, int mtrIn2, int intSpeed) {
 	digitalWrite(mtrIn2, in2);
 }
 
-void MotorClass::setMotor(int leftMotor, int rightMotor)
+void CRC_MotorClass::setMotor(int leftMotor, int rightMotor)
 {
-	setMotor(Hardware.mtr2Enable, Hardware.mtr2In1, Hardware.mtr2In2, rightMotor);
-	setMotor(Hardware.mtr1Enable, Hardware.mtr1In1, Hardware.mtr1In2, leftMotor);
+	setMotor(CRC_Hardware.mtr2Enable, CRC_Hardware.mtr2In1, CRC_Hardware.mtr2In2, rightMotor);
+	setMotor(CRC_Hardware.mtr1Enable, CRC_Hardware.mtr1In1, CRC_Hardware.mtr1In2, leftMotor);
 
 	UnitState.leftMotor = leftMotor;
 	UnitState.rightMotor = rightMotor;
