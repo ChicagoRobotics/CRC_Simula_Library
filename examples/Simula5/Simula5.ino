@@ -7,13 +7,12 @@ See README.md for license details
 ****************************************************/
 
 
+#include <Wire.h>
 #include <SD.h>							// By Arduino/Spark Fun
 #include <HardwareSerial.h>
 #include <SPI.h>						// Arduino Lib  
-#include <pca9635.h>					// TODO Replace Me
-#include <i2c_device.h>                 // TODO Replace Me with 2-Wire
-#include <I2C.h>                        // TODO Replace Me with 2-Wire
 
+#include "CRC_PCA9635.h"
 #include "CRC_FlashHelper.h"
 #include "CRC_ConfigurationManager.h"
 #include "CRC_Logger.h"
@@ -30,10 +29,21 @@ See README.md for license details
 
 unsigned long lastMessageTime;		// Last Time a message was recieved by this Unit
 
+/** Start Instantiate all CRC Modules here **/
 struct HIVEMSG_STATE UnitState;		// Current state of the Unit
+CRC_HardwareClass CRC_Hardware;
 CRC_Messaging WirelessComm;			// For Remote/Wireless Access
 CRC_Messaging TerminalComm;         // Local diagnostic access
 CRC_ZigbeeController Zigbee;
+CRC_SensorsClass CRC_Sensors;
+CRC_MotorClass CRC_Motor;
+CRC_LoggerClass CRC_Logger;
+CRC_LightsClass CRC_Lights(CRC_Hardware.i2cPca9635Left, CRC_Hardware.i2cPca9635Right);
+
+CRC_FileManagerClass CRC_FileManager;
+CRC_ConfigurationManagerClass CRC_ConfigurationManager;
+CRC_AudioManagerClass CRC_AudioManager;
+/** End Instantiate all CRC Modules here **/
 
 void setup()
 {
@@ -45,6 +55,11 @@ void setup()
 
 	CRC_Hardware.init();
 	CRC_Lights.init();
+
+	if (CRC_AudioManager.init()) {
+		UnitState.audioPlayer = true;
+	}
+	CRC_Sensors.init();
 
 	Zigbee.init(Serial2, WirelessComm);
 	CRC_Logger.addLogDestination(&WirelessComm);
@@ -60,8 +75,9 @@ void loop()
 	unsigned long now = millis();
 
 	CRC_Hardware.startScanStatus(now);
+	CRC_Sensors.startScan();
+
 	CRC_AudioManager.updateAudioState();
-	CRC_Lights.updateDisplayState(now);
 
 	// Start::Wireless
 	if (Zigbee.isReady())
@@ -81,5 +97,6 @@ void loop()
 	}
 	// End::Diagnostic/Usb Port
 
+	CRC_Sensors.endScan();
 	CRC_Hardware.endScanStatus(now);
 }

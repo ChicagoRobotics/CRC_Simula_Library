@@ -8,11 +8,8 @@ Copyright (c) 2016, Chicago Robotics Corp.
 See README.md for license details
 ****************************************************/
 
-#include <I2C.h>
 #include "CRC_Lights.h"
 
-
-CRC_LightsClass CRC_Lights;
 
 /**
 * Use a mapping if we have wierd mappings for the LED Bank.
@@ -27,7 +24,7 @@ struct LIGHTS_LED_DEFINITION {
 static const LIGHTS_LED_DEFINITION LIGHTS_LED_MAPPINGS[] = {
 	{ true, 0x02, 0x01, 0x00 }, // 0 = L1
 	{ true, 0x05, 0x04, 0x03 }, // 1 = L2
-	{ true, 0x07, 0x07, 0x06 }, // 2 = L3
+	{ true, 0x08, 0x07, 0x06 }, // 2 = L3
 	{ true, 0x0B, 0x0A, 0x09 }, // 3 = L4
 	{ true, 0x0E, 0x0D, 0x0C }, // 4 = L5
 
@@ -61,49 +58,15 @@ const uint8_t PROGMEM LIGHTS_LED_GAMMA[] =
 	215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 
 };
 
+CRC_LightsClass::CRC_LightsClass(uint8_t leftAddress, uint8_t rightAddress)
+	:ledLeft(leftAddress), ledRight(rightAddress)
+{
+}
 
 void CRC_LightsClass::init()
 {
-	PCA9635.reset();
-	PCA9635.set_sleep(0x0);
-	PCA9635.set_led_mode(0x02);
-
-	ledLeft.begin(0x0, false);
-	ledLeft.set_sleep(0x0);
-	ledLeft.set_led_mode(0x02);
-
-	ledRight.begin(0x1, false);
-	ledRight.set_sleep(0x0);
-	ledRight.set_led_mode(0x02);
-
-	int ledDelay = 20;
-
-	// Sequence Each On/Off
-	for (uint8_t ledno = 0; ledno <= 15; ledno++) 
-	{
-		setLeftLed(ledno, 255);
-		setRightLed(ledno, 255);
-		delay(ledDelay);
-		setLeftLed(ledno, 0x00);
-		setRightLed(ledno, 0x00);
-	}
-
-	// Sequence All On/Off
-	for (uint8_t ledno = 0; ledno <= 15; ledno++)
-	{
-		setLeftLed(ledno, 255);
-		setRightLed(ledno, 255);
-	}
-
-	delay(ledDelay * 10);
-
-	// Sequence Off
-	for (uint8_t ledno = 0; ledno <= 15; ledno++)
-	{
-		setLeftLed(ledno, 0);
-		setRightLed(ledno, 0);
-	}
-
+	ledLeft.init();
+	ledRight.init();
 }
 
 /*
@@ -113,9 +76,9 @@ void CRC_LightsClass::init()
 * 2 = individual PWM only
 * 3 = individual and group PWM
 */
-void CRC_LightsClass::setLed(pca9635 & ledBank, uint8_t ledNum, uint8_t level)
+void CRC_LightsClass::setLed(CRC_PCA9635 & ledBank, uint8_t ledNum, uint8_t level)
 {
-	ledBank.set_led_pwm(ledNum, pgm_read_byte( &LIGHTS_LED_GAMMA[level] )) ;
+	ledBank.setLed(ledNum, pgm_read_byte( &LIGHTS_LED_GAMMA[level] )) ;
 }
 
 
@@ -152,9 +115,3 @@ boolean CRC_LightsClass::setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8
 	return true;
 }
 
-
-void CRC_LightsClass::updateDisplayState(unsigned long now)
-{
-	// TODO, currently, NOP
-	// Called from Loop, so we can inject additional behavior
-}

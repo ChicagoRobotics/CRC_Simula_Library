@@ -16,8 +16,6 @@ See README.md for license details
 #include "CRC_Hardware.h"
 #include <SPI.h>
 
-CRC_AudioManagerClass CRC_AudioManager;
-
 // START VS1053 Definitions (TODO, delete/comment out what is not used)
 #define VS1053_REG_MODE  0x00
 #define VS1053_SCI_READ 0x03

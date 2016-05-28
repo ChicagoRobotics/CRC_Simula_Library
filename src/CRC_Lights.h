@@ -17,20 +17,20 @@ See README.md for license details
 	#include "WProgram.h"
 #endif
 
-#include <pca9635.h>
+#include "CRC_PCA9635.h"
 
 class CRC_LightsClass
 {
  private:
-	 pca9635 ledLeft;
-	 pca9635 ledRight;
+	 CRC_PCA9635 ledLeft;
+	 CRC_PCA9635 ledRight;
 
-	 inline void setLed(pca9635 & ledBank, uint8_t ledNum, uint8_t level);
+	 inline void setLed(CRC_PCA9635 & ledBank, uint8_t ledNum, uint8_t level);
 
  public:
-	void init();
+	CRC_LightsClass(uint8_t leftAddress, uint8_t rightAddress);
 
-	void updateDisplayState(unsigned long now);  // Call this from the Loop function to update the Led display state
+	void init();
 
 	void setLeftLed(uint8_t ledNum, uint8_t level); // 0=Off, 1000 = On, between 1-256 = Level
 	void setRightLed(uint8_t ledNum, uint8_t level); // 0=Off, 1000 = On, between 1-256 = Level

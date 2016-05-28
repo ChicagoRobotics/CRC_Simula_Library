@@ -11,7 +11,6 @@ See README.md for license details
 
 #include "CRC_Logger.h"
 
-CRC_LoggerClass CRC_Logger;
 
 CRC_LoggerClass::CRC_LoggerClass()
 {

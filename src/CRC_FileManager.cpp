@@ -14,9 +14,6 @@ See README.md for license details
 #include "CRC_FileManager.h"
 #include "CRC_Messaging.h"
 
-
-CRC_FileManagerClass CRC_FileManager;
-
 #define FILE_TX_BUFFER_SZ		50
 #define FILE_RX_BUFFER_SZ       50
 

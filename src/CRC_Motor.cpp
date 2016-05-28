@@ -12,8 +12,6 @@ See README.md for license details
 #include "CRC_Globals.h"
 #include "CRC_Hardware.h"
 
-CRC_MotorClass CRC_Motor;
-
 
 void CRC_MotorClass::setMotor(int mtrEnable, int mtrIn1, int mtrIn2, int intSpeed) {
 	boolean in1 = HIGH;

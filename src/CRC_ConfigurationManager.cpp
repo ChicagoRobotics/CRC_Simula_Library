@@ -17,8 +17,6 @@ See README.md for license details
 #include "CRC_FlashHelper.h"
 #include "CRC_Globals.h"
 
-CRC_ConfigurationManagerClass CRC_ConfigurationManager;
-
 bool CRC_ConfigurationManagerClass::getConfig(const __FlashStringHelper * cfgName, char * szValue, size_t bufferSize)
 {
 	if (!initConfig())

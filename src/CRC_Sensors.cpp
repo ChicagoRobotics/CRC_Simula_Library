@@ -14,7 +14,6 @@ See README.md for license details
 #include "CRC_Hardware.h"
 #include "CRC_ConfigurationManager.h"
 
-CRC_SensorsClass CRC_Sensors;
 
 #define THRESHOLD_IR_BOOLEAN      200
 #define PING_TIMEOUT              1000 * 100

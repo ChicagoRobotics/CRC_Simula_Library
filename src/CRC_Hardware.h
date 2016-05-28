@@ -75,6 +75,8 @@ class CRC_HardwareClass
 	 // const byte SPI_mosi = 51; // Reserved - Standard Arduino SPI
 	 // const byte SPI_clk = 52;  // Reserved - Standard Arduino SPI
 
+	 const uint8_t i2cPca9635Left = 0x00;
+	 const uint8_t i2cPca9635Right= 0x01;
 #endif
 
 	void init();

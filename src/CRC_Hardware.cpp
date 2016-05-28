@@ -10,18 +10,14 @@ Copyright (c) 2016, Chicago Robotics Corp.
 See README.md for license details
 ****************************************************/
 
-#include <i2c_device.h>
-#include <I2C.h>
 #include <SPI.h>
 #include <SD.h>
+#include <Wire.h>
 
 #include "CRC_Hardware.h"
 #include "CRC_Globals.h"
-#include "CRC_AudioManager.h"
-#include "CRC_Sensors.h"
 
-// Global Instance
-CRC_HardwareClass CRC_Hardware;
+
 
 void CRC_HardwareClass::init()
 {
@@ -42,11 +38,6 @@ void CRC_HardwareClass::init()
 
 	UnitState.sdCard = SD.begin(sdcard_cs);
 
-	if (CRC_AudioManager.init()) {
-		UnitState.audioPlayer = true;
-	}
-
-	CRC_Sensors.init();
 }
 
 
@@ -111,8 +102,8 @@ void CRC_HardwareClass::setupSPI()
 }
 void CRC_HardwareClass::setupI2C()
 {
-	I2c.begin();
-	I2c.timeOut(500);
+	Wire.begin();
+	Wire.setTimeout(500);
 }
 
 
@@ -124,10 +115,6 @@ void CRC_HardwareClass::startScanStatus(unsigned long startTime)
 	int v;
 	UnitState.freeRam = (uint16_t)(&v - (__brkval == 0 ? (uint16_t)&__heap_start : (uint16_t)__brkval));
 	// Scan Free Ram END
-
-	UnitState.audioPlaying = CRC_AudioManager.isPlayingAudio();
-
-	CRC_Sensors.startScan();
 };
 
 void CRC_HardwareClass::endScanStatus(unsigned long startTime)
@@ -137,8 +124,6 @@ void CRC_HardwareClass::endScanStatus(unsigned long startTime)
 	UnitState.loopLastTimeMillis = loopTime; // Last Time in millis
 	UnitState.loopMinTimeMillis = min(UnitState.loopMinTimeMillis + 1, loopTime);  // Min Time in millis
 	UnitState.loopMaxTimeMillis = max(UnitState.loopMaxTimeMillis, loopTime);  // Max Time in millis
-
-	CRC_Sensors.endScan();
 }
 
 
