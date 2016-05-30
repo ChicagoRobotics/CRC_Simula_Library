@@ -19,16 +19,16 @@ See README.md for license details
 
 #include "CRC_PCA9635.h"
 
-class CRC_LightsClass
+class CRC_Lights
 {
  private:
-	 CRC_PCA9635 ledLeft;
-	 CRC_PCA9635 ledRight;
+	 CRC_PCA9635& ledLeft;
+	 CRC_PCA9635& ledRight;
 
-	 inline void setLed(CRC_PCA9635 & ledBank, uint8_t ledNum, uint8_t level);
+	 inline void setLed(CRC_PCA9635& ledBank, uint8_t ledNum, uint8_t level);
 
  public:
-	CRC_LightsClass(uint8_t leftAddress, uint8_t rightAddress);
+	 CRC_Lights(CRC_PCA9635& leftBank, CRC_PCA9635& rightBank);
 
 	void init();
 
@@ -37,8 +37,6 @@ class CRC_LightsClass
 
 	boolean setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue);
 };
-
-extern CRC_LightsClass CRC_Lights;
 
 #endif
 

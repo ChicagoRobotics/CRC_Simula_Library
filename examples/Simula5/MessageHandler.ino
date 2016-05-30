@@ -100,16 +100,16 @@ void msgHandler_MusicPlay(uint8_t messageSequence, uint8_t messageId, void * mes
 	}
 	else if (playCommand->playType == HIVEMSG_MUSIC_CMD_PLAY)
 	{
-		CRC_AudioManager.startAudioFile(playCommand->filePath);
+		AudioManager.startAudioFile(playCommand->filePath);
 		messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 	}
 	else if (playCommand->playType == HIVEMSG_MUSIC_CMD_REQUEST)
 	{
-		if (CRC_AudioManager.isPlayingAudio()) {
+		if (AudioManager.isPlayingAudio()) {
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_FAILED, ERR_BUSY);
 		}
 		else {
-			CRC_AudioManager.startAudioFile(playCommand->filePath);
+			AudioManager.startAudioFile(playCommand->filePath);
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 		}
 	}
@@ -125,15 +125,15 @@ void msgHandler_MusicCtrl(uint8_t messageSequence, uint8_t messageId, void * mes
 
 	switch(controlCommand->cmd) {
 		case HIVEMSG_MUSIC_CMD_STOP:
-			CRC_AudioManager.stopAudio();
+			AudioManager.stopAudio();
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 			break;
 		case HIVEMSG_MUSIC_CMD_VOLUME:
-			CRC_AudioManager.setVolume(controlCommand->value1, controlCommand->value2);
+			AudioManager.setVolume(controlCommand->value1, controlCommand->value2);
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 			break;
 		case HIVEMSG_MUSIC_CMD_AMP:
-			CRC_AudioManager.setAmpGain(controlCommand->value1);
+			AudioManager.setAmpGain(controlCommand->value1);
 			messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 			break;
 		default:
@@ -147,7 +147,7 @@ void msgHandler_LedCtrl(uint8_t messageSequence, uint8_t messageId, void * messa
 
 	switch (controlCommand->cmd) {
 	case HIVEMSG_LED_CMD_SET:
-		CRC_Lights.setLed(controlCommand->ledId, controlCommand->red, controlCommand->green, controlCommand->blue);
+		Lights.setLed(controlCommand->ledId, controlCommand->red, controlCommand->green, controlCommand->blue);
 		messageSource->sendAck(messageSequence, messageId, HIVEMSG_ACK_OK);
 		break;
 	default:

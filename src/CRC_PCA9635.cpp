@@ -65,22 +65,18 @@ void CRC_PCA9635::init()
 	// Init
 	writeRegister(PCA9635_REG_MODE1, 0x81);  //  AUTOINCR | NOSLEEP | ALLADRR
 
-
 	// Set to PWM Mode for now
 	for (int i = 0; i < 15; i++) {
 		setLedMode(i, PCA9635_LEDPWM);
+		setLed(i, 0);
 	}
-
-	reset();
-
 }
 
 void CRC_PCA9635::reset()
 {
-	// TODO, Send Software Reset
-	for (int i = 0; i < 15; i++) {
-		setLed(i, 0);
-	}
+	// TODO, Send Software Reset, requires R/W logic
+	// For now, just reinit
+	init();
 }
 
 void CRC_PCA9635::setLedMode(uint8_t ledNum, uint8_t mode)
@@ -88,7 +84,6 @@ void CRC_PCA9635::setLedMode(uint8_t ledNum, uint8_t mode)
 	if (ledNum <= 15 && mode <= 3)
 	{
 		uint8_t reg = PCA9635_REG_LEDMODEBASE + (ledNum >> 2);
-		// some bit magic
 		uint8_t shift = (ledNum & 0x03) * 2;  // 0,2,4,6 places
 		uint8_t setmask = mode << shift;
 		uint8_t clrmask = ~(0x03 << shift);

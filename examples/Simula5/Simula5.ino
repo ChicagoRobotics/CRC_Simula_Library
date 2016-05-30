@@ -38,11 +38,14 @@ CRC_ZigbeeController Zigbee;
 CRC_SensorsClass CRC_Sensors;
 CRC_MotorClass CRC_Motor;
 CRC_LoggerClass CRC_Logger;
-CRC_LightsClass CRC_Lights(CRC_Hardware.i2cPca9635Left, CRC_Hardware.i2cPca9635Right);
+
+CRC_PCA9635 pca9635_Left(CRC_Hardware.i2cPca9635Left);
+CRC_PCA9635 pca9635_Right(CRC_Hardware.i2cPca9635Right);
+CRC_Lights Lights(pca9635_Left, pca9635_Right);
 
 CRC_FileManagerClass CRC_FileManager;
 CRC_ConfigurationManagerClass CRC_ConfigurationManager;
-CRC_AudioManagerClass CRC_AudioManager;
+CRC_AudioManager AudioManager;
 /** End Instantiate all CRC Modules here **/
 
 void setup()
@@ -54,9 +57,9 @@ void setup()
 	CRC_Logger.log(CRC_Logger.LOG_INFO, F("Unit bootup sequence"));
 
 	CRC_Hardware.init();
-	CRC_Lights.init();
+	Lights.init();
 
-	if (CRC_AudioManager.init()) {
+	if (AudioManager.init()) {
 		UnitState.audioPlayer = true;
 	}
 	CRC_Sensors.init();
@@ -77,7 +80,7 @@ void loop()
 	CRC_Hardware.startScanStatus(now);
 	CRC_Sensors.startScan();
 
-	CRC_AudioManager.updateAudioState();
+	AudioManager.updateAudioState();
 
 	// Start::Wireless
 	if (Zigbee.isReady())

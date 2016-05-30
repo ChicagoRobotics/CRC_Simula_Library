@@ -14,13 +14,16 @@ See README.md for license details
 /** Start Instantiate all CRC Modules here **/
 struct HIVEMSG_STATE UnitState;		// Current state of the Unit
 CRC_HardwareClass CRC_Hardware;
-CRC_LightsClass CRC_Lights(CRC_Hardware.i2cPca9635Left, CRC_Hardware.i2cPca9635Right);
+
+CRC_PCA9635 leftLedBank(CRC_Hardware.i2cPca9635Left);
+CRC_PCA9635 rightLedBank(CRC_Hardware.i2cPca9635Right);
+CRC_Lights lights(leftLedBank, rightLedBank);
 /** End Instantiate all CRC Modules here **/
 
 void setup()
 {
 	CRC_Hardware.init();
-	CRC_Lights.init();
+	lights.init();
 }
 
 
@@ -29,24 +32,24 @@ void loop()
   int delayTime=300;
   // Just rotate colors all the way through
   for(uint8_t  ledId=0; ledId < 10; ledId++) {
-    CRC_Lights.setLed(ledId, 0, 0, 255);
+    lights.setLed(ledId, 0, 0, 255);
     delay(delayTime);
 
-    CRC_Lights.setLed(ledId, 0, 255, 0);
+    lights.setLed(ledId, 0, 255, 0);
     delay(delayTime);    
 
-    CRC_Lights.setLed(ledId, 255, 0, 0);
+    lights.setLed(ledId, 255, 0, 0);
     delay(delayTime);        
     
-    CRC_Lights.setLed(ledId, 0, 255, 255);
+    lights.setLed(ledId, 0, 255, 255);
     delay(delayTime);
 
-    CRC_Lights.setLed(ledId, 255, 255, 0);
+    lights.setLed(ledId, 255, 255, 0);
     delay(delayTime);    
 
-    CRC_Lights.setLed(ledId, 255, 255, 255);
+    lights.setLed(ledId, 255, 255, 255);
     delay(delayTime);    
 
-    CRC_Lights.setLed(ledId, 0, 0, 0);
+    lights.setLed(ledId, 0, 0, 0);
   }
 }

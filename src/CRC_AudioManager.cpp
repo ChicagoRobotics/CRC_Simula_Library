@@ -63,7 +63,7 @@ See README.md for license details
 // END VS1053 Definitions
 
 
-boolean CRC_AudioManagerClass::init()
+boolean CRC_AudioManager::init()
 {
 	_isPlayingAudio = false;
 	reset();
@@ -75,7 +75,7 @@ boolean CRC_AudioManagerClass::init()
 	return (vs1053begin == 4);
 }
 
-void CRC_AudioManagerClass::dumpRegs(void) {
+void CRC_AudioManager::dumpRegs(void) {
 	Serial.begin(115200, SERIAL_8N1);
 	Serial.print("Mode = 0x"); Serial.println(sciRead(VS1053_REG_MODE), HEX);
 	Serial.print("Stat = 0x"); Serial.println(sciRead(VS1053_REG_STATUS), HEX);
@@ -84,7 +84,7 @@ void CRC_AudioManagerClass::dumpRegs(void) {
 	Serial.end();
 }
 
-void CRC_AudioManagerClass::reset()
+void CRC_AudioManager::reset()
 {
 	digitalWrite(CRC_Hardware.ampEnable, LOW);
 	_ampEnabled = false;
@@ -100,12 +100,12 @@ void CRC_AudioManagerClass::reset()
 	sciWrite(VS1053_REG_CLOCKF, 0x6000);
 }
 
-void CRC_AudioManagerClass::softReset(void) {
+void CRC_AudioManager::softReset(void) {
 	sciWrite(VS1053_REG_MODE, VS1053_MODE_SM_SDINEW | VS1053_MODE_SM_RESET);
 	delay(100);
 }
 
-void CRC_AudioManagerClass::stopAudio()
+void CRC_AudioManager::stopAudio()
 {
 	if (!_isPlayingAudio) 
 	{
@@ -124,12 +124,12 @@ void CRC_AudioManagerClass::stopAudio()
 	//currentTrack.close();
 }
 
-void CRC_AudioManagerClass::spiwrite(uint8_t c)
+void CRC_AudioManager::spiwrite(uint8_t c)
 {
 	SPI.transfer(c);
 }
 
-void CRC_AudioManagerClass::sciWrite(uint8_t addr, uint16_t data) {
+void CRC_AudioManager::sciWrite(uint8_t addr, uint16_t data) {
 	SPI.beginTransaction(VS1053_CONTROL_SPI_SETTING);
 	digitalWrite(CRC_Hardware.vs1053_cs, LOW);
 	spiwrite(VS1053_SCI_WRITE);
@@ -140,7 +140,7 @@ void CRC_AudioManagerClass::sciWrite(uint8_t addr, uint16_t data) {
 	SPI.endTransaction();
 }
 
-uint16_t CRC_AudioManagerClass::sciRead(uint8_t addr) {
+uint16_t CRC_AudioManager::sciRead(uint8_t addr) {
 	uint16_t data;
 	SPI.beginTransaction(VS1053_CONTROL_SPI_SETTING);
 	digitalWrite(CRC_Hardware.vs1053_cs, LOW);
@@ -156,12 +156,12 @@ uint16_t CRC_AudioManagerClass::sciRead(uint8_t addr) {
 	return data;
 }
 
-uint8_t CRC_AudioManagerClass::spiread(void)
+uint8_t CRC_AudioManager::spiread(void)
 {
 	return SPI.transfer(0x00);
 }
 
-boolean CRC_AudioManagerClass::startAudioFile(const char * fileName)
+boolean CRC_AudioManager::startAudioFile(const char * fileName)
 {
 	// reset current playback if any
 	sciWrite(VS1053_REG_MODE, VS1053_MODE_SM_LINE1 | VS1053_MODE_SM_SDINEW);
@@ -193,7 +193,7 @@ boolean CRC_AudioManagerClass::startAudioFile(const char * fileName)
 	return true;
 }
 
-boolean CRC_AudioManagerClass::playFullAudioFile(const char *trackname)
+boolean CRC_AudioManager::playFullAudioFile(const char *trackname)
 {
 	if (!startAudioFile(trackname)) return false;
 
@@ -205,12 +205,12 @@ boolean CRC_AudioManagerClass::playFullAudioFile(const char *trackname)
 
 }
 
-boolean CRC_AudioManagerClass::readyForAudioData()
+boolean CRC_AudioManager::readyForAudioData()
 {
 	return digitalRead(CRC_Hardware.vs1053_dreq);
 }
 
-void CRC_AudioManagerClass::feedAudioBuffer()
+void CRC_AudioManager::feedAudioBuffer()
 {
 	static boolean running = false;
 
@@ -255,7 +255,7 @@ void CRC_AudioManagerClass::feedAudioBuffer()
 	return;
 }
 
-void CRC_AudioManagerClass::playAudioData(uint8_t *buffer, uint8_t buffsiz) {
+void CRC_AudioManager::playAudioData(uint8_t *buffer, uint8_t buffsiz) {
 	SPI.beginTransaction(VS1053_DATA_SPI_SETTING);
 
 	digitalWrite(CRC_Hardware.vs1053_dcs, LOW);
@@ -266,7 +266,7 @@ void CRC_AudioManagerClass::playAudioData(uint8_t *buffer, uint8_t buffsiz) {
 	SPI.endTransaction();
 }
 
-void CRC_AudioManagerClass::setAmpGain(uint8_t level)
+void CRC_AudioManager::setAmpGain(uint8_t level)
 {
 	switch (level)
 	{
@@ -289,7 +289,7 @@ void CRC_AudioManagerClass::setAmpGain(uint8_t level)
 	}
 }
 
-void CRC_AudioManagerClass::setVolume(uint8_t left, uint8_t right)
+void CRC_AudioManager::setVolume(uint8_t left, uint8_t right)
 {
 	uint16_t v;
 	v = left;
@@ -299,7 +299,7 @@ void CRC_AudioManagerClass::setVolume(uint8_t left, uint8_t right)
 	sciWrite(VS1053_REG_VOLUME, v);
 }
 
-void CRC_AudioManagerClass::updateAudioState()
+void CRC_AudioManager::updateAudioState()
 { 
 	feedAudioBuffer(); 
 

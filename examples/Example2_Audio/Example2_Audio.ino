@@ -13,7 +13,7 @@ See README.md for license details
 /** Start Instantiate all CRC Modules here **/
 struct HIVEMSG_STATE UnitState;		// Current state of the Unit
 CRC_HardwareClass CRC_Hardware;
-CRC_AudioManagerClass CRC_AudioManager;
+CRC_AudioManager AudioManager;
 /** End Instantiate all CRC Modules here **/
 
 // We have Sounds in the /voices folder of the SD card
@@ -23,19 +23,19 @@ uint8_t sound = 0x02;
 void setup()
 {
   CRC_Hardware.init();
-  CRC_AudioManager.init();
-  CRC_AudioManager.setAmpGain(0);   // Lowest Amp Level (0-3)
-  CRC_AudioManager.setVolume(0, 0); // Max Volume  
-  CRC_AudioManager.startAudioFile("/voices/01_01.mp3");
+  AudioManager.init();
+  AudioManager.setAmpGain(0);   // Lowest Amp Level (0-3)
+  AudioManager.setVolume(0, 0); // Max Volume  
+  AudioManager.startAudioFile("/voices/01_01.mp3");
 }
 
 
 void loop()
 {
   // Feed the Audio buffer, until the file completes
-  CRC_AudioManager.updateAudioState();
+  AudioManager.updateAudioState();
 
-  if(!CRC_AudioManager.isPlayingAudio())
+  if(!AudioManager.isPlayingAudio())
   {
       delay(3000);
       queueNextFile();
@@ -55,7 +55,7 @@ void queueNextFile()
       voice++;
       sound = 1; 
     }
-    if(CRC_AudioManager.startAudioFile(fileName))
+    if(AudioManager.startAudioFile(fileName))
     {
       return;
     }

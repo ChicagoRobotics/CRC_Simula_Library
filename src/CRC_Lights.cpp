@@ -58,12 +58,12 @@ const uint8_t PROGMEM LIGHTS_LED_GAMMA[] =
 	215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 
 };
 
-CRC_LightsClass::CRC_LightsClass(uint8_t leftAddress, uint8_t rightAddress)
-	:ledLeft(leftAddress), ledRight(rightAddress)
+CRC_Lights::CRC_Lights(CRC_PCA9635 & leftBank, CRC_PCA9635 & rightBank)
+	:ledLeft(leftBank), ledRight(rightBank)
 {
 }
 
-void CRC_LightsClass::init()
+void CRC_Lights::init()
 {
 	ledLeft.init();
 	ledRight.init();
@@ -76,24 +76,24 @@ void CRC_LightsClass::init()
 * 2 = individual PWM only
 * 3 = individual and group PWM
 */
-void CRC_LightsClass::setLed(CRC_PCA9635 & ledBank, uint8_t ledNum, uint8_t level)
+void CRC_Lights::setLed(CRC_PCA9635& ledBank, uint8_t ledNum, uint8_t level)
 {
 	ledBank.setLed(ledNum, pgm_read_byte( &LIGHTS_LED_GAMMA[level] )) ;
 }
 
 
-void CRC_LightsClass::setLeftLed(uint8_t ledNum, uint8_t level)
+void CRC_Lights::setLeftLed(uint8_t ledNum, uint8_t level)
 {
 	setLed(ledLeft, ledNum, level);
 }
 
-void CRC_LightsClass::setRightLed(uint8_t ledNum, uint8_t level)
+void CRC_Lights::setRightLed(uint8_t ledNum, uint8_t level)
 {
 	setLed(ledRight, ledNum, level);
 }
 
 
-boolean CRC_LightsClass::setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue)
+boolean CRC_Lights::setLed(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue)
 {
 	if (ledId >= LIGHTS_LED_DEFINITION_COUNT) {
 		return false;
