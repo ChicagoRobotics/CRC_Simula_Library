@@ -1,4 +1,4 @@
-CRC Simula Library
+CRC Simula® Library
 ==================
 
 This module contains the Arduino Library for the Simula Boards and Modules. 
