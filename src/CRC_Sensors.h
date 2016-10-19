@@ -1,12 +1,4 @@
-/***************************************************
-Uses: Module for controlling and scanning the sensors.
-
-This file is designed for the Simula project by Chicago Robotics Corp.
-http://www.chicagorobotics.net/products
-
-Copyright (c) 2016, Chicago Robotics Corp.
-See README.md for license details
-****************************************************/
+// Sensor_State.h
 
 #ifndef _CRC_SENSORS_h
 #define _CRC_SENSORS_h
@@ -17,39 +9,31 @@ See README.md for license details
 	#include "WProgram.h"
 #endif
 
-class CRC_SensorsClass
-{
- protected:
-	 uint16_t pingFrontMin;
-	 uint16_t pingFrontSlope;
-	 uint16_t pingFrontMax;
+#include <Adafruit_LSM9DS0.h>
 
- protected:
-
-	 void pollSensors();
-	 void readAndSaveSensors();
-	 void readAndSavePing();
-
-	 boolean booleanIrCheck(int firstValue, int secondValue, int minTreshold);
-
-	 unsigned long lastIrPollSensors;
-	 int irLeft;
-	 int irFrontLeft;
-	 int irFrontRight;
-	 int irRight;
-	 int irFront;
-	 int irFrontLeftEdge;
-	 int irFrontRightEdge;
-
-	 void debugLogBooleanSensor(const  __FlashStringHelper* message, boolean state);
- public:
+class Sensors {
+protected:
+	unsigned long lastIrPollSensors;
+public:
 	void init();
+	void activate();
+	void deactivate();
+	void readIR();
+	boolean irReadingUpdated();
+	Adafruit_LSM9DS0 lsm;
 
-	void startScan();
-	void endScan();
+	//Distance sensors
+	boolean irLeftCliff;		// Left cliff sensor reading
+	boolean irRightCliff;		// Right cliff sensor reading
+	uint8_t irLeftCM;			// Left IR CM reading
+	uint8_t irLeftFrontCM;		// Left front IR CM reading
+	uint8_t irFrontCM;			// Front IR CM reading
+	uint8_t irRightFrontCM;		// Right front IR CM reading
+	uint8_t irRightCM;			// Right IR CM reading
+	uint8_t pingFrontCM;		// Front Ping CM Reading
 };
 
-extern CRC_SensorsClass CRC_Sensors;
+extern Sensors sensors;
 
 #endif
 
