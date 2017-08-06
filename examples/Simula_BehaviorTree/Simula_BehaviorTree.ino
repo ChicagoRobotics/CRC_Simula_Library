@@ -68,12 +68,12 @@ void setup() {
 
 	crcLights.setRandomColor();
 	crcLights.showRunwayWithDelay();
-	//MP3 Player & Amplifier
-	crcAudio.setAmpGain(1); //0 = low, 3 = high
-	crcAudio.setVolume(40, 40); //0 = loudest, 60 = softest ?
+	
+	//Amplifier gain and VS1053 volume
+	crcAudio.setAmpGain(2); //0 = low, 3 = high
+	crcAudio.setVolume(20, 20); //0 = loudest, 60 = softest ?
 	
 	if (hardware.sdInitialized) {
-		//crcAudio.playRandomAudio(F("effects/PwrDn_"), 10, F(".mp3"));
 		crcAudio.playRandomAudio(F("effects/PwrUp_"), 10, F(".mp3"));
 	}
 	Serial.println(F("Setup complete."));
