@@ -27,8 +27,16 @@ CRC_LightsClass crcLights(hardware.i2cPca9635Left, hardware.i2cPca9635Right);
  */
 void setup()
 {
+  Serial.begin(115200);
+  Serial.println(F("Booting."));
+
   hardware.init();
+  Serial.println(F("Hardware initialized."));
+  
   crcLights.init();
+  Serial.println(F("Lights module initialized"));  
+
+  Serial.println(F("Setup complete."));
 }
 
 /**
@@ -47,8 +55,11 @@ void loop()
  */
 void runwayEffects()
 {
+  Serial.println(F("Start - Demonstrating Runway Effects"));
   crcLights.setRandomColor(); // Init runway
   crcLights.showRunwayWithDelay(); // Demo random runway lights
+
+    Serial.println(F("Completed - Demonstrating Runway Effects"));
 }
 
 /**
@@ -56,6 +67,8 @@ void runwayEffects()
  */
 void fadeInOutButton() 
 {
+  Serial.println(F("Start - Fading In/Out Top Button"));
+    
   uint8_t intensity = 0;
   int dir = 1; 
   while(! (intensity == 0 && dir == -1) ) {
@@ -68,6 +81,8 @@ void fadeInOutButton()
       
     intensity += dir;
   }
+
+    Serial.println(F("Completed - Fading In/Out Top Button"));
 }
 
 /**
@@ -75,6 +90,8 @@ void fadeInOutButton()
  */
 void cycleLeds() 
 {
+  Serial.println(F("Start - Cycling all LEDs"));
+    
   int delayTime=300;
   // Just rotate colors all the way through
   for(uint8_t  ledId=0; ledId < 10; ledId++) {
@@ -98,6 +115,8 @@ void cycleLeds()
 
     crcLights.setLed(ledId, 0, 0, 0);
   }
+
+  Serial.println(F("Completed - Cycling all LEDs"));  
 }
 
 
@@ -106,12 +125,15 @@ void cycleLeds()
  */
 void fadeInOutLeds() 
 {
+  Serial.println(F("Start - Fade In/Out LEDs"));
+    
   uint8_t intensity;
   int dir;
 
   // Fade Up/Down Red
   intensity = 0;
   dir = 1;   
+  Serial.println(F("    - Fade In/Out Red"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, intensity, 0, 0);
@@ -127,6 +149,7 @@ void fadeInOutLeds()
   // Fade Up/Down Green
   intensity = 0;
   dir = 1;  
+  Serial.println(F("    - Fade In/Out Green"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, 0, intensity, 0);
@@ -143,6 +166,7 @@ void fadeInOutLeds()
   // Fade Up/Down Blue
   intensity = 0;
   dir = 1;     
+  Serial.println(F("    - Fade In/Out Blue"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, 0, 0, intensity);
@@ -159,6 +183,7 @@ void fadeInOutLeds()
   // Fade Up/Down Red+Green
   intensity = 0;
   dir = 1;     
+  Serial.println(F("    - Fade In/Out Red+Green"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, intensity, intensity, 0);
@@ -176,6 +201,7 @@ void fadeInOutLeds()
   // Fade Up/Down Red+Blue
   intensity = 0;
   dir = 1;     
+  Serial.println(F("    - Fade In/Out Red+Blue"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, intensity, 0, intensity);
@@ -192,6 +218,7 @@ void fadeInOutLeds()
   // Fade Up/Down Green+Blue
   intensity = 0;
   dir = 1;     
+  Serial.println(F("    - Fade In/Out Green+Blue"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, 0, intensity, intensity);
@@ -208,6 +235,7 @@ void fadeInOutLeds()
   // Fade Up/Down Red+Green+Blue
   intensity = 0;
   dir = 1;     
+  Serial.println(F("    - Fade In/Out Red+Green+Blue"));
   while(! (intensity == 0 && dir == -1) ) {
     for(uint8_t  ledId=0; ledId < 10; ledId++) {
       crcLights.setLed(ledId, intensity, intensity, intensity);
@@ -219,5 +247,7 @@ void fadeInOutLeds()
       
     intensity += dir;
   }
+
+  Serial.println(F("Completed - Fade In/Out LEDs"));  
 }    
 
