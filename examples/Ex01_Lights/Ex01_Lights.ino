@@ -27,6 +27,7 @@ CRC_LightsClass crcLights(hardware.i2cPca9635Left, hardware.i2cPca9635Right);
  */
 void setup()
 {
+  // You can use the Serial Monitor to see these message
   Serial.begin(115200);
   Serial.println(F("Booting."));
 

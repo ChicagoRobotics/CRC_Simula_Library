@@ -19,6 +19,7 @@ CRC_AudioManagerClass crcAudio;
 
 void setup()
 {
+  // You can use the Serial Monitor to see these message
   Serial.begin(115200);
   Serial.println(F("Booting."));
 

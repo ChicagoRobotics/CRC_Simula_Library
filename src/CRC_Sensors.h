@@ -1,4 +1,13 @@
-// Sensor_State.h
+/***************************************************
+Uses: Provides a higher level module around the sensors on
+Simula
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #ifndef _CRC_SENSORS_h
 #define _CRC_SENSORS_h

@@ -1,11 +1,18 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Provides a higher level module around the sensors on
+Simula
+
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
 
 #include "CRC_Sensors.h"
-#include "IR_BinaryDistance.h"
-#include "IR_AnalogDistance.h"
-#include "PingDistance.h"
+#include "CRC_IR_BinaryDistance.h"
+#include "CRC_IR_AnalogDistance.h"
+#include "CRC_PingDistance.h"
 #include "CRC_Hardware.h"
 
 void Sensors::init() {
@@ -37,14 +44,14 @@ void Sensors::deactivate() {
 }
 
 void Sensors::readIR() {
-	IR_BinaryDistance edgeLeft = IR_BinaryDistance(hardware.pinActEdge1, hardware.pinEdge1);
-	IR_BinaryDistance edgeRight = IR_BinaryDistance(hardware.pinActEdge2, hardware.pinEdge2);
-	IR_AnalogDistance perimLeft = IR_AnalogDistance(hardware.pinActPerim1, hardware.pinPerim1);
-	IR_AnalogDistance perimLeftFront = IR_AnalogDistance(hardware.pinActPerim2, hardware.pinPerim2);
-	IR_AnalogDistance perimFront = IR_AnalogDistance(hardware.pinActFrntIR, hardware.pinFrntIr);
-	IR_AnalogDistance perimRightFront = IR_AnalogDistance(hardware.pinActPerim3, hardware.pinPerim3);
-	IR_AnalogDistance perimRight = IR_AnalogDistance(hardware.pinActPerim4, hardware.pinPerim4);
-	PingDistance frontPing = PingDistance(hardware.pinPingTrigger, hardware.pinPingEcho);
+	CRC_IR_BinaryDistance edgeLeft = CRC_IR_BinaryDistance(hardware.pinActEdge1, hardware.pinEdge1);
+	CRC_IR_BinaryDistance edgeRight = CRC_IR_BinaryDistance(hardware.pinActEdge2, hardware.pinEdge2);
+	CRC_IR_AnalogDistance perimLeft = CRC_IR_AnalogDistance(hardware.pinActPerim1, hardware.pinPerim1);
+	CRC_IR_AnalogDistance perimLeftFront = CRC_IR_AnalogDistance(hardware.pinActPerim2, hardware.pinPerim2);
+	CRC_IR_AnalogDistance perimFront = CRC_IR_AnalogDistance(hardware.pinActFrntIR, hardware.pinFrntIr);
+	CRC_IR_AnalogDistance perimRightFront = CRC_IR_AnalogDistance(hardware.pinActPerim3, hardware.pinPerim3);
+	CRC_IR_AnalogDistance perimRight = CRC_IR_AnalogDistance(hardware.pinActPerim4, hardware.pinPerim4);
+	CRC_PingDistance frontPing = CRC_PingDistance(hardware.pinPingTrigger, hardware.pinPingEcho);
 
 	sensors.irLeftCM = perimLeft.readDistance();
 	sensors.irLeftFrontCM = perimLeftFront.readDistance();

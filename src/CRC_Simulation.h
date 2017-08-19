@@ -46,6 +46,9 @@ public:
 
 	//Action related
 	bool actionActive;
+	bool perimeterActive;
+	int turnSpeed;
+	int straightSpeed;
 };
 
 extern CRC_SimulationClass simulation;
