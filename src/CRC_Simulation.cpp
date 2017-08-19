@@ -24,6 +24,9 @@ CRC_SimulationClass::CRC_SimulationClass() {
 	breathFadeTimecheck = millis();
 
 	actionActive = false;
+	perimeterActive = false;
+	turnSpeed = 160;
+	straightSpeed = 180;
 }
 void CRC_SimulationClass::tick() {
 	unsigned long now = millis();

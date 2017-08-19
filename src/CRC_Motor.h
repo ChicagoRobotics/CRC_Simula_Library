@@ -1,7 +1,15 @@
-// Motor.h
+/***************************************************
+Uses: Provides a module for working with the motors.
 
-#ifndef _MOTOR_h
-#define _MOTOR_h
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
+
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+#ifndef _CRC_MOTOR_h
+#define _CRC_MOTOR_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -9,11 +17,9 @@
 	#include "WProgram.h"
 #endif
 
-#ifndef Encoder_h_
 #include <Encoder.h>
-#endif // !_ENCODER_h
 
-class Motor : public Encoder {
+class CRC_Motor : public Encoder {
 private:
 	int _mtrEnable;
 	int _mtrIn1;
@@ -25,7 +31,7 @@ private:
 	int _stallPower;
 	int _currentPower;
 public:
-	Motor(int encoderPin1, int encoderPin2, int mtrEnable, int mtrIn1, int mtrIn2);
+	CRC_Motor(int encoderPin1, int encoderPin2, int mtrEnable, int mtrIn1, int mtrIn2);
 	void setPower(int power);
 	void stop();
 	bool positionChanged();
@@ -35,11 +41,11 @@ public:
 	void setEncoderRate(int32_t pulsesPerSecond);
 };
 
-class Motors {
+class CRC_Motors {
 public:
-	Motor* motorLeft;
-	Motor* motorRight;
-	void initialize(Motor* mtrLeft, Motor* mtrRight) {
+	CRC_Motor* motorLeft;
+	CRC_Motor* motorRight;
+	void initialize(CRC_Motor* mtrLeft, CRC_Motor* mtrRight) {
 		motorLeft = mtrLeft;
 		motorRight = mtrRight;
 	}
@@ -63,7 +69,7 @@ public:
 	}
 };
 
-extern Motors motors;
+extern CRC_Motors motors;
 
 #endif
 

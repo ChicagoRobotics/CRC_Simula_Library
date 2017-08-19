@@ -1,10 +1,16 @@
-// 
-// 
-// 
+/***************************************************
+Uses: Provides a module for working with the motors.
 
-#include "Motor.h"
+This file is designed for the Simula project by Chicago Robotics Corp.
+http://www.chicagorobotics.net/products
 
-Motor::Motor(int encoderPin1, int encoderPin2, int mtrEnable, int mtrIn1, int mtrIn2)
+Copyright (c) 2016, Chicago Robotics Corp.
+See README.md for license details
+****************************************************/
+
+#include "CRC_Motor.h"
+
+CRC_Motor::CRC_Motor(int encoderPin1, int encoderPin2, int mtrEnable, int mtrIn1, int mtrIn2)
 	: Encoder(encoderPin1, encoderPin2) {
 	_mtrEnable = mtrEnable;
 	_mtrIn1 = mtrIn1;
@@ -19,7 +25,7 @@ Motor::Motor(int encoderPin1, int encoderPin2, int mtrEnable, int mtrIn1, int mt
 	motorActive = false;
 }
 
-void Motor::setPower(int power) {
+void CRC_Motor::setPower(int power) {
 	boolean in1 = HIGH;
 	boolean in2 = LOW;
 
@@ -43,14 +49,14 @@ void Motor::setPower(int power) {
 	}
 }
 
-void Motor::stop() {
+void CRC_Motor::stop() {
 	analogWrite(_mtrEnable, 0);
 	digitalWrite(_mtrIn1, LOW);
 	digitalWrite(_mtrIn2, LOW);
 	motorActive = false;
 }
 
-bool Motor::positionChanged() {
+bool CRC_Motor::positionChanged() {
 	bool _positionChanged = false;
 	int32_t _newPosition = read();
 	if (_newPosition != _previousPosition) {
@@ -60,7 +66,7 @@ bool Motor::positionChanged() {
 	return _positionChanged;
 }
 
-void Motor::accelerateToEncoderTarget(int32_t encoderTarget, int powerTarget) {
+void CRC_Motor::accelerateToEncoderTarget(int32_t encoderTarget, int powerTarget) {
 	unsigned long _currentMillis = millis();
 	if (read() < encoderTarget) {
 		if (_currentMillis - _previousRateCheckMillis >= _rateCheckInterval) {
@@ -79,7 +85,7 @@ void Motor::accelerateToEncoderTarget(int32_t encoderTarget, int powerTarget) {
 	}
 }
 
-void Motor::setEncoderRate(int32_t pulsesPerSecond) {
+void CRC_Motor::setEncoderRate(int32_t pulsesPerSecond) {
 	//1000 millis per second
 	int _interval = 20;
 	int _convertedPulses = pulsesPerSecond * _interval / 1000;

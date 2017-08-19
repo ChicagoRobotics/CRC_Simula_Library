@@ -11,11 +11,11 @@
 #include "CRC_Hardware.h"
 #include "CRC_Sensors.h"
 #include "BehaviorTree.h"
-#include "PingDistance.h"
-#include "IR_BinaryDistance.h"
-#include "IR_AnalogDistance.h"
-#include "DistanceSensor.h"
-#include "Motor.h"
+#include "CRC_PingDistance.h"
+#include "CRC_IR_BinaryDistance.h"
+#include "CRC_IR_AnalogDistance.h"
+#include "CRC_DistanceSensor.h"
+#include "CRC_Motor.h"
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
@@ -34,9 +34,9 @@ struct TREE_STATE treeState;
 Sensors sensors = Sensors();
 CRC_HardwareClass hardware;
 CRC_SimulationClass simulation;
-Motor motorLeft(hardware.enc1A, hardware.enc1B, hardware.mtr1Enable, hardware.mtr1In1, hardware.mtr1In2);
-Motor motorRight(hardware.enc2A, hardware.enc2B, hardware.mtr2Enable, hardware.mtr2In1, hardware.mtr2In2);
-Motors motors;
+CRC_Motor motorLeft(hardware.enc1A, hardware.enc1B, hardware.mtr1Enable, hardware.mtr1In1, hardware.mtr1In2);
+CRC_Motor motorRight(hardware.enc2A, hardware.enc2B, hardware.mtr2Enable, hardware.mtr2In1, hardware.mtr2In2);
+CRC_Motors motors;
 CRC_LightsClass crcLights(hardware.i2cPca9635Left, hardware.i2cPca9635Right);
 CRC_AudioManagerClass crcAudio;
 
@@ -59,7 +59,8 @@ Do_Nothing doNothing(80);
 void setup() {
 	Serial.begin(115200);
 	Serial.println(F("Booting."));
-
+	
+	//Visualize the tree here: https://www.gliffy.com/go/publish/10755293
 	initializeSystem();
 	behaviorTree.setRootChild(&selector[0]);
 	selector[0].addChildren({ &buttonStop, &batteryCheck, &orientationCheck, &selector[1], &randomSort[0] });
@@ -68,8 +69,7 @@ void setup() {
 
 	crcLights.setRandomColor();
 	crcLights.showRunwayWithDelay();
-	
-	//Amplifier gain and VS1053 volume
+	//MP3 Player & Amplifier
 	crcAudio.setAmpGain(2); //0 = low, 3 = high
 	crcAudio.setVolume(20, 20); //0 = loudest, 60 = softest ?
 	
