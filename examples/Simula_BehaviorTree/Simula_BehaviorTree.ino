@@ -31,7 +31,7 @@ File file;
 struct HARDWARE_STATE hardwareState;
 struct TREE_STATE treeState;
 
-Sensors sensors = Sensors();
+CRC_Sensors sensors = CRC_Sensors();
 CRC_HardwareClass hardware;
 CRC_SimulationClass simulation;
 CRC_Motor motorLeft(hardware.enc1A, hardware.enc1B, hardware.mtr1Enable, hardware.mtr1In1, hardware.mtr1In2);

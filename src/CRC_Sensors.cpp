@@ -15,11 +15,11 @@ See README.md for license details
 #include "CRC_PingDistance.h"
 #include "CRC_Hardware.h"
 
-void Sensors::init() {
+void CRC_Sensors::init() {
 	lsm = Adafruit_LSM9DS0();
 }
 
-void Sensors::activate() {
+void CRC_Sensors::activate() {
 	//Activate sensors
 	digitalWrite(hardware.pinActEdge1, HIGH);
 	digitalWrite(hardware.pinActEdge2, HIGH);
@@ -31,7 +31,7 @@ void Sensors::activate() {
 	lastIrPollSensors = 0;
 }
 
-void Sensors::deactivate() {
+void CRC_Sensors::deactivate() {
 	//Activate sensors
 	digitalWrite(hardware.pinActEdge1, LOW);
 	digitalWrite(hardware.pinActEdge2, LOW);
@@ -43,7 +43,7 @@ void Sensors::deactivate() {
 	lastIrPollSensors = 0;
 }
 
-void Sensors::readIR() {
+void CRC_Sensors::readIR() {
 	CRC_IR_BinaryDistance edgeLeft = CRC_IR_BinaryDistance(hardware.pinActEdge1, hardware.pinEdge1);
 	CRC_IR_BinaryDistance edgeRight = CRC_IR_BinaryDistance(hardware.pinActEdge2, hardware.pinEdge2);
 	CRC_IR_AnalogDistance perimLeft = CRC_IR_AnalogDistance(hardware.pinActPerim1, hardware.pinPerim1);
@@ -67,7 +67,7 @@ void Sensors::readIR() {
 	lastIrPollSensors = millis();
 }
 
-boolean Sensors::irReadingUpdated() {
+boolean CRC_Sensors::irReadingUpdated() {
 	unsigned long now = millis();
 	unsigned long diff = now - lastIrPollSensors;
 
