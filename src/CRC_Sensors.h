@@ -20,7 +20,7 @@ See README.md for license details
 
 #include <Adafruit_LSM9DS0.h>
 
-class Sensors {
+class CRC_Sensors {
 protected:
 	unsigned long lastIrPollSensors;
 public:
@@ -42,7 +42,7 @@ public:
 	uint8_t pingFrontCM;		// Front Ping CM Reading
 };
 
-extern Sensors sensors;
+extern CRC_Sensors sensors;
 
 #endif
 
